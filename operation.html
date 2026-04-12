@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>운영 관리</title>
+<style>
+:root{
+  --bg:#eef3f8;
+  --card:#ffffff;
+  --card-2:#f8fbff;
+  --line:#dde6f0;
+  --text:#0f172a;
+  --sub:#64748b;
+  --primary:#2563eb;
+  --primary-soft:#eaf2ff;
+  --primary-deep:#1d4ed8;
+  --danger:#dc2626;
+  --ok:#059669;
+  --warn:#d97706;
+  --shadow:0 18px 40px rgba(15,23,42,.08);
+  --shadow-soft:0 8px 20px rgba(15,23,42,.05);
+  --radius-xl:24px;
+  --radius-lg:18px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;font-family:"Malgun Gothic","맑은 고딕",Arial,sans-serif;background:linear-gradient(180deg,#f5f8fc 0%, var(--bg) 100%);color:var(--text)}
+body{overflow:hidden}
+button,input,select,textarea{font:inherit}
+.app{height:100dvh;display:flex;flex-direction:column;max-width:760px;margin:0 auto;background:var(--bg)}
+.top{padding:18px 16px 12px;background:linear-gradient(180deg,#f8fbff 0%, #eef3f8 100%);border-bottom:1px solid #e6edf5;flex:0 0 auto}
+.title h1{margin:0;font-size:30px;line-height:1.02;font-weight:900;letter-spacing:-1.2px}
+.title p{margin:8px 0 0;color:var(--sub);font-size:13px;line-height:1.5}
+.top-head{display:grid;grid-template-columns:1.1fr .9fr;align-items:start;gap:12px}
+.mini-count{display:grid;grid-template-columns:1fr 1fr;gap:8px;justify-content:end}
+.mini-chip{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.9);box-shadow:var(--shadow-soft);font-size:12px;color:#334155;font-weight:700}
+.views{flex:1 1 auto;position:relative;overflow:hidden}
+.track{display:flex;width:300%;height:100%;transition:transform .28s ease}
+.screen{width:100%;height:100%;padding:14px 14px 98px;overflow:auto}
+.stack{display:flex;flex-direction:column;gap:14px}
+.panel{background:rgba(255,255,255,.92);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:var(--radius-xl);box-shadow:var(--shadow);padding:16px}
+.row-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px}
+.card-title{font-size:22px;font-weight:900;letter-spacing:-.7px;margin:0}
+.card-desc{font-size:12px;color:var(--sub);margin:6px 0 0;line-height:1.45}
+.subseg{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#edf3fb;padding:5px;border-radius:16px;border:1px solid #e4ecf5}
+.subseg button{border:none;background:transparent;padding:11px 10px;border-radius:12px;font-weight:800;cursor:pointer;color:#475569}
+.subseg button.active{background:#fff;box-shadow:var(--shadow-soft);color:var(--text)}
+.field{margin-bottom:11px}
+.field label{display:block;font-size:12px;font-weight:900;margin-bottom:7px;color:#334155}
+.input,.select,.textarea{width:100%;border:1px solid var(--line);border-radius:16px;background:#fff;padding:13px 14px;color:var(--text);box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}
+.textarea{min-height:92px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.action-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn{border:none;background:#fff;color:var(--text);cursor:pointer;padding:12px 14px;border-radius:16px;border:1px solid var(--line);box-shadow:var(--shadow-soft);font-weight:800}
+.btn.primary{background:linear-gradient(180deg,var(--primary) 0%, var(--primary-deep) 100%);color:#fff;border-color:var(--primary)}
+.btn.soft{background:var(--primary-soft);color:var(--primary);border-color:#d8e6ff}
+.btn.small{padding:8px 10px;font-size:13px;border-radius:12px}
+.btn.danger{color:var(--danger)}
+.toolbar{display:grid;grid-template-columns:78px 1fr 1fr 96px;gap:8px;align-items:center}.toolbar.company-mode{grid-template-columns:78px 1fr 96px}
+.list{display:flex;flex-direction:column;gap:10px}
+.item{border:1px solid var(--line);border-radius:22px;padding:14px;background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);box-shadow:var(--shadow-soft)}
+.item-title{font-weight:900;font-size:17px;line-height:1.3;letter-spacing:-.3px}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{display:inline-flex;align-items:center;padding:7px 11px;border-radius:999px;font-size:12px;border:1px solid var(--line);background:#f8fafc;font-weight:700}
+.chip.ok{background:#ecfdf5;border-color:#a7f3d0;color:var(--ok)}
+.chip.warn{background:#fffbeb;border-color:#fde68a;color:var(--warn)}
+.chip.primary{background:#eff6ff;border-color:#bfdbfe;color:#1d4ed8}
+.note{margin-top:9px;font-size:13px;color:#475569;line-height:1.55;white-space:pre-wrap;word-break:break-word}
+.item-actions{display:flex;gap:6px;margin-top:10px}
+.empty{text-align:center;padding:26px 12px;color:var(--sub);border:1px dashed #d7dfeb;border-radius:18px;background:#fafcff}
+.master-grid{display:flex;flex-direction:column;gap:10px}
+.master-box{border:1px solid var(--line);border-radius:20px;padding:14px;background:#fff;box-shadow:var(--shadow-soft)}
+.master-head{font-weight:800;font-size:15px;margin-bottom:10px}
+.master-list{display:flex;flex-direction:column;gap:8px;max-height:220px;overflow:auto}
+.master-item{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);border-radius:14px;padding:10px 12px;background:#fbfcfe}
+.photo-list{display:flex;gap:8px;overflow:auto;padding-bottom:2px}
+.photo-thumb{width:86px;height:86px;border-radius:14px;border:1px solid var(--line);object-fit:cover;background:#f8fafc;flex:0 0 auto}
+.phone-link{color:#2563eb;text-decoration:none;font-weight:700}
+.footer-nav{position:fixed;left:50%;transform:translateX(-50%);bottom:12px;width:min(736px,calc(100% - 20px));background:rgba(255,255,255,.94);backdrop-filter:blur(18px);border:1px solid var(--line);box-shadow:0 24px 50px rgba(15,23,42,.14);border-radius:24px;padding:10px;display:grid;grid-template-columns:1fr 1fr 1fr .8fr .8fr;gap:8px;z-index:20}
+.nav-btn{border:none;background:transparent;padding:13px 8px;border-radius:16px;font-weight:900;cursor:pointer;text-align:center;letter-spacing:-.2px}
+.nav-btn.active{background:linear-gradient(180deg,var(--primary) 0%, var(--primary-deep) 100%);color:#fff;box-shadow:0 10px 20px rgba(37,99,235,.28)}
+.hint{font-size:12px;color:var(--sub);line-height:1.7}
+.loc-row{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end}
+@media (max-width:640px){
+  .title h1{font-size:24px}
+  .top-head{grid-template-columns:1fr}
+  .mini-count{grid-template-columns:1fr 1fr}
+  .grid2,.grid3,.loc-row{grid-template-columns:1fr}
+  .toolbar{grid-template-columns:72px 1fr 1fr 84px;gap:6px}.toolbar.company-mode{grid-template-columns:72px 1fr 84px}
+  .toolbar .btn,.toolbar .select{padding:10px 8px}
+  .card-title{font-size:20px}
+  .screen{padding-bottom:100px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="top-head">
+      <div class="title">
+        <h1>운영 관리</h1>
+        <p>시스템 이상, 외부업체 작업, 기준정보를 한 화면 흐름으로 관리합니다.</p>
+      </div>
+      <div class="mini-count">
+        <span class="mini-chip">미정상 <b id="sumIncidentOpen">0</b></span>
+        <span class="mini-chip">긴급 <b id="sumIncidentUrgent">0</b></span>
+        <span class="mini-chip">진행중 <b id="sumExternalOpen">0</b></span>
+        <span class="mini-chip">고위험 <b id="sumExternalHigh">0</b></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="views">
+    <div class="track" id="track">
+      <section class="screen">
+        <div class="stack">
+          <div class="panel" id="incidentFormPanel">
+            <div class="row-head">
+              <div><h2 class="card-title">시스템 이상</h2><p class="card-desc">현장 운영 중 발생한 이상 증상과 조치 내역을 기록합니다.</p></div>
+              <div class="subseg" style="width:170px">
+                <button class="active" data-sub="incident" data-mode="form">입력</button>
+                <button data-sub="incident" data-mode="list">목록</button>
+              </div>
+            </div>
+
+            <div class="grid2">
+              <div class="field"><label>발생일</label><input class="input" type="date" id="incidentOccurredAt"></div>
+              <div class="field"><label>작성자</label><select class="select" id="incidentWriter"></select></div>
+            </div>
+
+            <div class="field"><label>증상</label><textarea class="textarea" id="incidentSymptom" placeholder="이상 증상을 입력하세요"></textarea></div>
+            <div class="field"><label>조치내용</label><textarea class="textarea" id="incidentActionDetail" placeholder="조치 내역을 입력하세요"></textarea></div>
+
+            <div class="grid3">
+              <div class="field"><label>중요도</label><select class="select" id="incidentPriority"><option>긴급</option><option>높음</option><option selected>보통</option><option>낮음</option></select></div>
+              <div class="field"><label>정상 여부</label><select class="select" id="incidentIsNormal"><option value="Y">Y</option><option value="N" selected>N</option></select></div>
+              <div class="field"><label>작업업체</label><select class="select" id="incidentCompany"></select></div>
+            </div>
+
+            <div class="action-row">
+              <button class="btn primary" id="saveIncidentBtn">등록</button>
+              <button class="btn" id="resetIncidentBtn">초기화</button>
+            </div>
+          </div>
+
+          <div class="panel" id="incidentListPanel" style="display:none">
+            <div class="row-head">
+              <div><h2 class="card-title">시스템 이상 목록</h2><p class="card-desc">카드형 목록</p></div>
+              <div class="subseg" style="width:170px">
+                <button data-sub="incident" data-mode="form">입력</button>
+                <button class="active" data-sub="incident" data-mode="list">목록</button>
+              </div>
+            </div>
+            <div class="grid2">
+              <select class="select" id="incidentWriterFilter"><option value="">작성자 전체</option></select>
+              <select class="select" id="incidentFilterNormal"><option value="all">전체</option><option value="Y">정상</option><option value="N">미정상</option></select>
+            </div>
+            <div class="list" id="incidentList" style="margin-top:12px"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen">
+        <div class="stack">
+          <div class="panel" id="externalFormPanel">
+            <div class="row-head">
+              <div><h2 class="card-title">외부업체 작업</h2><p class="card-desc">작업 일정, 인원, 감독자, 현장 사진까지 한 번에 관리합니다.</p></div>
+              <div class="subseg" style="width:170px">
+                <button class="active" data-sub="external" data-mode="form">입력</button>
+                <button data-sub="external" data-mode="list">목록</button>
+              </div>
+            </div>
+
+            <div class="grid2">
+              <div class="field"><label>시작일</label><input class="input" type="date" id="externalStartDate"></div>
+              <div class="field"><label>종료일</label><input class="input" type="date" id="externalEndDate"></div>
+            </div>
+
+            <div class="grid2">
+              <div class="field"><label>업체명</label><select class="select" id="externalCompany"></select></div>
+              <div class="field"><label>위험도</label><select class="select" id="externalRiskLevel"><option>상</option><option selected>중</option><option>하</option></select></div>
+            </div>
+
+            <div class="grid3">
+              <div class="field"><label>작업인원</label><input class="input" type="number" min="0" id="externalWorkerCount" placeholder="인원수"></div>
+              <div class="field"><label>감독자 이름</label><input class="input" id="externalSupervisorName" placeholder="감독자 이름"></div>
+              <div class="field"><label>감독자 전화번호</label><input class="input" id="externalSupervisorPhone" placeholder="예: 01012345678"></div>
+            </div>
+
+            <div class="field">
+              <label>현장(복수선택)</label>
+              <div class="grid2">
+                <select class="select" id="externalLocationGroupSelect"><option value="">동 선택</option></select>
+                <select class="select" id="externalLocationSubSelect" multiple size="8" style="height:220px;padding:8px;"></select>
+              </div>
+              <div class="hint" style="margin-top:6px">대구분 = 동, 소구분 = 층. 동을 고른 뒤 층을 여러 개 선택합니다.</div>
+            </div>
+
+            <div class="grid2">
+              <div class="field"><label>접수자</label><select class="select" id="externalReceiver"></select></div>
+              <div class="field"><label>종료여부</label><select class="select" id="externalIsClosed"><option value="Y">Y</option><option value="N" selected>N</option></select></div>
+            </div>
+
+            <div class="field"><label>특이사항</label><textarea class="textarea" id="externalNote" placeholder="작업 특이사항, 위험요소, 메모"></textarea></div>
+
+            <div class="field">
+              <label>현장사진 추가 (복수 가능)</label>
+              <input class="input" type="file" id="externalPhotos" accept="image/*" multiple>
+              <div class="photo-list" id="externalPhotoPreview" style="margin-top:8px"></div>
+            </div>
+
+            <div class="action-row">
+              <button class="btn primary" id="saveExternalBtn">등록</button>
+              <button class="btn" id="resetExternalBtn">초기화</button>
+            </div>
+          </div>
+
+          <div class="panel" id="externalListPanel" style="display:none">
+            <div class="row-head">
+              <div><h2 class="card-title">외부업체 목록</h2><p class="card-desc">필터를 빠르게 조합해 즉시 조회</p></div>
+              <div class="subseg" style="width:170px">
+                <button data-sub="external" data-mode="form">입력</button>
+                <button class="active" data-sub="external" data-mode="list">목록</button>
+              </div>
+            </div>
+
+            <div class="toolbar" id="externalListToolbar">
+              <button class="btn soft" type="button" id="externalDbModeBtn">업체</button>
+              <select class="select" id="externalDbSelect"><option value="">업체</option></select>
+              <select class="select" id="externalDbSubSelect"><option value="">층</option></select>
+              <select class="select" id="externalFilterClosed"><option value="all">상태</option><option value="Y">종료</option><option value="N">진행중</option></select>
+            </div>
+
+            <div class="list" id="externalList" style="margin-top:12px"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen">
+        <div class="stack">
+          <div class="panel">
+            <h2 class="card-title">기준정보 관리</h2>
+            <p class="card-desc">현장은 대구분(동), 소구분(층)으로 관리</p>
+
+            <div class="master-grid">
+              <div class="master-box">
+                <div class="master-head">작성자</div>
+                <div class="action-row" style="margin-bottom:10px"><input class="input" id="writerInput" placeholder="작성자 추가"><button class="btn primary small" id="addWriterBtn">추가</button></div>
+                <div class="master-list" id="writerList"></div>
+              </div>
+
+              <div class="master-box">
+                <div class="master-head">업체명</div>
+                <div class="action-row" style="margin-bottom:10px"><input class="input" id="companyInput" placeholder="업체명 추가"><button class="btn primary small" id="addCompanyBtn">추가</button></div>
+                <div class="master-list" id="companyList"></div>
+              </div>
+
+              <div class="master-box">
+                <div class="master-head">현장(대구분/소구분)</div>
+                <div class="loc-row" style="margin-bottom:10px">
+                  <div><input class="input" id="locationGroupInput" placeholder="대구분 예: D동"></div>
+                  <div><input class="input" id="locationSubInput" placeholder="소구분 예: 10F"></div>
+                  <button class="btn primary small" id="addLocationBtn">추가</button>
+                </div>
+                <div class="master-list" id="locationList"></div>
+              </div>
+
+              <div class="master-box">
+                <div class="master-head">접수자</div>
+                <div class="action-row" style="margin-bottom:10px"><input class="input" id="receiverInput" placeholder="접수자 추가"><button class="btn primary small" id="addReceiverBtn">추가</button></div>
+                <div class="master-list" id="receiverList"></div>
+              </div>
+            </div>
+          </div>
+          <div class="panel"><div class="hint">DB 이름은 그대로 유지했습니다.</div></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <input type="file" id="restoreFile" accept=".json" style="display:none">
+
+  <div class="footer-nav">
+    <button class="nav-btn active" data-main="0">시스템</button>
+    <button class="nav-btn" data-main="1">외부업체</button>
+    <button class="nav-btn" data-main="2">기준정보</button>
+    <button class="nav-btn" id="backupNavBtn" type="button">백업</button>
+    <label class="nav-btn" for="restoreFile">복원</label>
+  </div>
+</div>
+
+<script>
+const DB_NAME='ops-management-db-v4';
+const DB_VERSION=1;
+const STORES={incidents:'incidents',externalWorks:'externalWorks',companies:'companies',locations:'locations',receivers:'receivers',writers:'writers'};
+
+let state={incidents:[],externalWorks:[],companies:[],locations:[],receivers:[],writers:[]};
+let editingIncidentId=null;
+let editingExternalId=null;
+let externalDbMode='company';
+
+const today=()=>new Date().toISOString().slice(0,10);
+const uid=()=>Date.now()+'-'+Math.random().toString(36).slice(2,8);
+const esc=v=>String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s]));
+
+function openDB(){
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open(DB_NAME,DB_VERSION);
+    req.onupgradeneeded=()=>{
+      const db=req.result;
+      Object.values(STORES).forEach(n=>{ if(!db.objectStoreNames.contains(n)) db.createObjectStore(n,{keyPath:'id'}); });
+    };
+    req.onsuccess=()=>resolve(req.result);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function getAll(storeName){
+  const db=await openDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(storeName,'readonly');
+    const req=tx.objectStore(storeName).getAll();
+    req.onsuccess=()=>resolve(req.result||[]);
+    req.onerror=()=>reject(req.error);
+  });
+}
+async function putItem(storeName,item){
+  const db=await openDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(storeName,'readwrite');
+    tx.objectStore(storeName).put(item);
+    tx.oncomplete=()=>resolve(true);
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+async function deleteItem(storeName,id){
+  const db=await openDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(storeName,'readwrite');
+    tx.objectStore(storeName).delete(id);
+    tx.oncomplete=()=>resolve(true);
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+async function clearStore(storeName){
+  const db=await openDB();
+  return new Promise((resolve,reject)=>{
+    const tx=db.transaction(storeName,'readwrite');
+    tx.objectStore(storeName).clear();
+    tx.oncomplete=()=>resolve(true);
+    tx.onerror=()=>reject(tx.error);
+  });
+}
+const getName=(list,id)=>{const f=list.find(x=>x.id===id);return f?f.name||`${f.group} ${f.sub}`:'';};
+const getLocation=(id)=>state.locations.find(x=>x.id===id);
+const locationLabel=(loc)=>loc ? `${loc.group} ${loc.sub}` : '';
+function uniqueGroups(){ return [...new Set(state.locations.map(x=>x.group).filter(Boolean))].sort(); }
+function subsByGroup(group){ return state.locations.filter(x=>x.group===group).sort((a,b)=>(a.sub||'').localeCompare(b.sub||'')); }
+
+function fillSelect(el,list,firstText='선택'){
+  const old=el.value;
+  let html='<option value="">'+esc(firstText)+'</option>';
+  list.forEach(i=>html+='<option value="'+esc(i.id)+'">'+esc(i.name||`${i.group} ${i.sub}`)+'</option>');
+  el.innerHTML=html;
+  if(list.some(x=>x.id===old)) el.value=old;
+}
+function fillSimpleSelect(el, items, firstText='선택'){
+  const old=el.value;
+  let html='<option value="">'+esc(firstText)+'</option>';
+  items.forEach(v=>html+='<option value="'+esc(v)+'">'+esc(v)+'</option>');
+  el.innerHTML=html;
+  if(items.includes(old)) el.value=old;
+}
+function renderExternalLocationInputs(groupValue='', selectedIds=[]){
+  const groupSel=document.getElementById('externalLocationGroupSelect');
+  const subSel=document.getElementById('externalLocationSubSelect');
+  const groups=uniqueGroups();
+  fillSimpleSelect(groupSel, groups, '동 선택');
+  if(groupValue) groupSel.value=groupValue;
+  const subs=subsByGroup(groupSel.value);
+  subSel.innerHTML=subs.map(loc=>'<option value="'+esc(loc.id)+'"'+(selectedIds.includes(loc.id)?' selected':'')+'>'+esc(loc.sub)+'</option>').join('');
+}
+function getSelectedLocationIds(){
+  const el=document.getElementById('externalLocationSubSelect');
+  return el ? Array.from(el.selectedOptions).map(opt=>opt.value) : [];
+}
+function updateExternalDbSelectors(){
+  const btn=document.getElementById('externalDbModeBtn');
+  const main=document.getElementById('externalDbSelect');
+  const sub=document.getElementById('externalDbSubSelect');
+  const toolbar=document.getElementById('externalListToolbar');
+
+  if(externalDbMode==='company'){
+    btn.textContent='업체';
+    fillSelect(main, state.companies, '업체');
+    sub.innerHTML='<option value="">층</option>';
+    sub.disabled=true;
+    sub.style.display='none';
+    if(toolbar) toolbar.classList.add('company-mode');
+  }else{
+    btn.textContent='현장';
+    fillSimpleSelect(main, uniqueGroups(), '동');
+    const group=main.value;
+    const subs=subsByGroup(group);
+    let html='<option value="">층</option>';
+    subs.forEach(loc=>{ html+='<option value="'+esc(loc.id)+'">'+esc(loc.sub)+'</option>'; });
+    sub.innerHTML=html;
+    sub.disabled=!group;
+    sub.style.display='';
+    if(toolbar) toolbar.classList.remove('company-mode');
+  }
+}
+function renderSummary(){
+  document.getElementById('sumIncidentOpen').textContent=state.incidents.filter(x=>x.isNormal==='N').length;
+  document.getElementById('sumIncidentUrgent').textContent=state.incidents.filter(x=>x.priority==='긴급').length;
+  document.getElementById('sumExternalOpen').textContent=state.externalWorks.filter(x=>x.isClosed==='N').length;
+  document.getElementById('sumExternalHigh').textContent=state.externalWorks.filter(x=>x.riskLevel==='상').length;
+}
+function renderMasterList(containerId,items,storeName){
+  const box=document.getElementById(containerId);
+  if(!items.length){ box.innerHTML='<div class="empty">등록된 데이터가 없습니다.</div>'; return; }
+  if(storeName===STORES.locations){
+    box.innerHTML=items.map(item=>`
+      <div class="master-item">
+        <div>${esc(item.group)} / ${esc(item.sub)}</div>
+        <button class="btn danger small" onclick="removeMaster('${storeName}','${item.id}')">삭제</button>
+      </div>
+    `).join('');
+    return;
+  }
+  box.innerHTML=items.map(item=>`
+    <div class="master-item">
+      <div>${esc(item.name)}</div>
+      <button class="btn danger small" onclick="removeMaster('${storeName}','${item.id}')">삭제</button>
+    </div>
+  `).join('');
+}
+function renderPhotoPreview(images){
+  const box=document.getElementById('externalPhotoPreview');
+  if(!images || !images.length){ box.innerHTML=''; return; }
+  box.innerHTML=images.map(src=>'<img class="photo-thumb" src="'+src+'" alt="현장사진">').join('');
+}
+function renderIncidentList(){
+  const writerFilter=document.getElementById('incidentWriterFilter').value;
+  const f=document.getElementById('incidentFilterNormal').value;
+  const box=document.getElementById('incidentList');
+  const rows=state.incidents.slice().sort((a,b)=>(b.occurredAt||'').localeCompare(a.occurredAt||'')).filter(item=>{
+    const matchesWriter=!writerFilter || item.writerId===writerFilter;
+    return matchesWriter && (f==='all'||item.isNormal===f);
+  });
+  if(!rows.length){ box.innerHTML='<div class="empty">등록된 데이터가 없습니다.</div>'; return; }
+  box.innerHTML=rows.map(item=>{
+    const writer=getName(state.writers,item.writerId)||'-';
+    const company=getName(state.companies,item.workCompanyId)||'-';
+    return `
+      <div class="item">
+        <div class="item-title">${esc(item.symptom||'')}</div>
+        <div class="meta">
+          <span class="chip">${esc(item.occurredAt||'')}</span>
+          <span class="chip">${esc(writer)}</span>
+          <span class="chip primary">${esc(item.priority||'')}</span>
+          ${item.isNormal==='Y'?'<span class="chip ok">정상</span>':'<span class="chip warn">미정상</span>'}
+          <span class="chip">${esc(company)}</span>
+        </div>
+        ${item.actionDetail?'<div class="note">'+esc(item.actionDetail)+'</div>':''}
+        <div class="item-actions">
+          <button class="btn small" onclick="editIncident('${item.id}')">수정</button>
+          <button class="btn danger small" onclick="removeIncident('${item.id}')">삭제</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+function renderExternalList(){
+  const main=document.getElementById('externalDbSelect').value;
+  const sub=document.getElementById('externalDbSubSelect').value;
+  const f=document.getElementById('externalFilterClosed').value;
+  const box=document.getElementById('externalList');
+
+  const rows=state.externalWorks.slice().sort((a,b)=>(b.startDate||'').localeCompare(a.startDate||'')).filter(item=>{
+    let matchesDb=true;
+    if(externalDbMode==='company'){
+      matchesDb=!main || item.companyId===main;
+    }else{
+      if(sub){
+        matchesDb=(item.locationIds||[]).includes(sub);
+      }else if(main){
+        matchesDb=(item.locationIds||[]).some(id=>{
+          const loc=getLocation(id);
+          return loc && loc.group===main;
+        });
+      }
+    }
+    return matchesDb && (f==='all'||item.isClosed===f);
+  });
+
+  if(!rows.length){ box.innerHTML='<div class="empty">등록된 데이터가 없습니다.</div>'; return; }
+  box.innerHTML=rows.map(item=>{
+    const company=getName(state.companies,item.companyId)||'-';
+    const locations=(item.locationIds||[]).map(id=>locationLabel(getLocation(id))).filter(Boolean).join(', ')||'-';
+    const receiver=getName(state.receivers,item.receiverId)||'-';
+    const dateRange=[item.startDate||'', item.endDate||''].filter(Boolean).join(' ~ ');
+    const phone=item.supervisorPhone ? `<a class="phone-link" href="tel:${esc(item.supervisorPhone)}">${esc(item.supervisorPhone)}</a>` : '-';
+    const photoHtml=(item.photos&&item.photos.length)?'<div class="photo-list" style="margin-top:8px">'+item.photos.map(src=>'<img class="photo-thumb" src="'+src+'" alt="현장사진">').join('')+'</div>':'';
+    return `
+      <div class="item">
+        <div class="item-title">${esc(company)}</div>
+        <div class="meta">
+          <span class="chip">${esc(dateRange||'-')}</span>
+          <span class="chip primary">${esc(item.riskLevel||'')}</span>
+          <span class="chip">${esc(locations)}</span>
+          <span class="chip">${esc(receiver)}</span>
+          ${item.isClosed==='Y'?'<span class="chip ok">종료</span>':'<span class="chip warn">진행중</span>'}
+        </div>
+        <div class="note">작업인원: ${esc(item.workerCount||'0')} / 감독자: ${esc(item.supervisorName||'-')} / 전화: ${phone}</div>
+        ${item.note?'<div class="note">'+esc(item.note)+'</div>':''}
+        ${photoHtml}
+        <div class="item-actions">
+          <button class="btn small" onclick="editExternal('${item.id}')">수정</button>
+          <button class="btn danger small" onclick="removeExternal('${item.id}')">삭제</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+function renderAll(){
+  fillSelect(document.getElementById('incidentWriter'),state.writers,'작성자 선택');
+  fillSelect(document.getElementById('incidentCompany'),state.companies,'업체 선택');
+  fillSelect(document.getElementById('externalCompany'),state.companies,'업체 선택');
+  fillSelect(document.getElementById('externalReceiver'),state.receivers,'접수자 선택');
+  fillSelect(document.getElementById('incidentWriterFilter'),state.writers,'작성자 전체');
+
+  renderMasterList('writerList',state.writers,STORES.writers);
+  renderMasterList('companyList',state.companies,STORES.companies);
+  renderMasterList('locationList',state.locations,STORES.locations);
+  renderMasterList('receiverList',state.receivers,STORES.receivers);
+
+  renderExternalLocationInputs(document.getElementById('externalLocationGroupSelect')?.value || '', getSelectedLocationIds());
+  updateExternalDbSelectors();
+  renderSummary();
+  renderIncidentList();
+  renderExternalList();
+}
+async function loadState(){
+  state.incidents=await getAll(STORES.incidents);
+  state.externalWorks=await getAll(STORES.externalWorks);
+  state.companies=await getAll(STORES.companies);
+  state.locations=await getAll(STORES.locations);
+  state.receivers=await getAll(STORES.receivers);
+  state.writers=await getAll(STORES.writers);
+  state.locations.sort((a,b)=>((a.group||'').localeCompare(b.group||'') || (a.sub||'').localeCompare(b.sub||'')));
+  ['companies','receivers','writers'].forEach(k=>state[k].sort((a,b)=>(a.name||'').localeCompare(b.name||'')));
+  renderAll();
+}
+function resetIncidentForm(){
+  editingIncidentId=null;
+  document.getElementById('incidentOccurredAt').value=today();
+  document.getElementById('incidentWriter').value='';
+  document.getElementById('incidentSymptom').value='';
+  document.getElementById('incidentActionDetail').value='';
+  document.getElementById('incidentPriority').value='보통';
+  document.getElementById('incidentIsNormal').value='N';
+  document.getElementById('incidentCompany').value='';
+  document.getElementById('saveIncidentBtn').textContent='등록';
+}
+function resetExternalForm(){
+  editingExternalId=null;
+  document.getElementById('externalStartDate').value=today();
+  document.getElementById('externalEndDate').value='';
+  document.getElementById('externalCompany').value='';
+  document.getElementById('externalRiskLevel').value='중';
+  document.getElementById('externalReceiver').value='';
+  document.getElementById('externalNote').value='';
+  document.getElementById('externalIsClosed').value='N';
+  document.getElementById('externalWorkerCount').value='';
+  document.getElementById('externalSupervisorName').value='';
+  document.getElementById('externalSupervisorPhone').value='';
+  document.getElementById('externalPhotos').value='';
+  renderExternalLocationInputs('', []);
+  renderPhotoPreview([]);
+  document.getElementById('saveExternalBtn').textContent='등록';
+}
+async function addMaster(storeName,inputId){
+  const el=document.getElementById(inputId);
+  const name=el.value.trim();
+  if(!name){ alert('값을 입력해 주세요.'); el.focus(); return; }
+  await putItem(storeName,{id:uid(),name,createdAt:new Date().toISOString()});
+  el.value='';
+  await loadState();
+}
+async function addLocation(){
+  const group=document.getElementById('locationGroupInput').value.trim();
+  const sub=document.getElementById('locationSubInput').value.trim();
+  if(!group || !sub){ alert('대구분과 소구분을 모두 입력해 주세요.'); return; }
+  await putItem(STORES.locations,{id:uid(),group,sub,createdAt:new Date().toISOString()});
+  document.getElementById('locationGroupInput').value='';
+  document.getElementById('locationSubInput').value='';
+  await loadState();
+}
+async function removeMaster(storeName,id){
+  if(!confirm('삭제하시겠습니까?')) return;
+  await deleteItem(storeName,id);
+  await loadState();
+}
+function filesToDataUrls(files){
+  return Promise.all(Array.from(files).map(file=>new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>resolve(reader.result);
+    reader.onerror=()=>reject(reader.error);
+    reader.readAsDataURL(file);
+  })));
+}
+async function saveIncident(){
+  const occurredAt=document.getElementById('incidentOccurredAt').value;
+  const writerId=document.getElementById('incidentWriter').value;
+  const symptom=document.getElementById('incidentSymptom').value.trim();
+  const actionDetail=document.getElementById('incidentActionDetail').value.trim();
+  const priority=document.getElementById('incidentPriority').value;
+  const isNormal=document.getElementById('incidentIsNormal').value;
+  const workCompanyId=document.getElementById('incidentCompany').value;
+  if(!occurredAt || !writerId || !symptom){ alert('발생일, 작성자, 증상은 필수입니다.'); return; }
+
+  await putItem(STORES.incidents,{
+    id:editingIncidentId||uid(),
+    occurredAt,writerId,symptom,actionDetail,priority,isNormal,workCompanyId,
+    updatedAt:new Date().toISOString()
+  });
+  resetIncidentForm();
+  switchSub('incident','list');
+  await loadState();
+}
+async function saveExternal(){
+  const startDate=document.getElementById('externalStartDate').value;
+  const endDate=document.getElementById('externalEndDate').value;
+  const companyId=document.getElementById('externalCompany').value;
+  const riskLevel=document.getElementById('externalRiskLevel').value;
+  const receiverId=document.getElementById('externalReceiver').value;
+  const note=document.getElementById('externalNote').value.trim();
+  const isClosed=document.getElementById('externalIsClosed').value;
+  const workerCount=document.getElementById('externalWorkerCount').value;
+  const supervisorName=document.getElementById('externalSupervisorName').value.trim();
+  const supervisorPhone=document.getElementById('externalSupervisorPhone').value.trim();
+  const locationIds=getSelectedLocationIds();
+
+  if(!startDate || !companyId || !receiverId || !locationIds.length){ alert('시작일, 업체명, 현장, 접수자는 필수입니다.'); return; }
+  if(endDate && endDate < startDate){ alert('종료일은 시작일보다 빠를 수 없습니다.'); return; }
+
+  const files=document.getElementById('externalPhotos').files;
+  const newPhotos=files && files.length ? await filesToDataUrls(files) : [];
+  let existingPhotos=[];
+  if(editingExternalId){
+    const existing=state.externalWorks.find(x=>x.id===editingExternalId);
+    if(existing && existing.photos) existingPhotos=existing.photos;
+  }
+  const photos=newPhotos.length ? existingPhotos.concat(newPhotos) : existingPhotos;
+
+  await putItem(STORES.externalWorks,{
+    id:editingExternalId||uid(),
+    startDate,endDate,companyId,riskLevel,receiverId,note,isClosed,
+    workerCount,supervisorName,supervisorPhone,locationIds,photos,
+    updatedAt:new Date().toISOString()
+  });
+  resetExternalForm();
+  switchSub('external','list');
+  await loadState();
+}
+function moveMain(index){
+  document.getElementById('track').style.transform='translateX(-'+(index*100/3)+'%)';
+  document.querySelectorAll('.nav-btn[data-main]').forEach(btn=>btn.classList.toggle('active',Number(btn.dataset.main)===index));
+}
+function switchSub(type,mode){
+  if(type==='incident'){
+    document.getElementById('incidentFormPanel').style.display=mode==='form'?'':'none';
+    document.getElementById('incidentListPanel').style.display=mode==='list'?'':'none';
+  }else{
+    document.getElementById('externalFormPanel').style.display=mode==='form'?'':'none';
+    document.getElementById('externalListPanel').style.display=mode==='list'?'':'none';
+  }
+  document.querySelectorAll('[data-sub="'+type+'"]').forEach(btn=>btn.classList.toggle('active',btn.dataset.mode===mode));
+}
+function editIncident(id){
+  const item=state.incidents.find(x=>x.id===id);
+  if(!item) return;
+  moveMain(0);
+  switchSub('incident','form');
+  editingIncidentId=id;
+  document.getElementById('incidentOccurredAt').value=item.occurredAt||today();
+  document.getElementById('incidentWriter').value=item.writerId||'';
+  document.getElementById('incidentSymptom').value=item.symptom||'';
+  document.getElementById('incidentActionDetail').value=item.actionDetail||'';
+  document.getElementById('incidentPriority').value=item.priority||'보통';
+  document.getElementById('incidentIsNormal').value=item.isNormal||'N';
+  document.getElementById('incidentCompany').value=item.workCompanyId||'';
+  document.getElementById('saveIncidentBtn').textContent='수정 저장';
+}
+function editExternal(id){
+  const item=state.externalWorks.find(x=>x.id===id);
+  if(!item) return;
+  moveMain(1);
+  switchSub('external','form');
+  editingExternalId=id;
+  document.getElementById('externalStartDate').value=item.startDate||today();
+  document.getElementById('externalEndDate').value=item.endDate||'';
+  document.getElementById('externalCompany').value=item.companyId||'';
+  document.getElementById('externalRiskLevel').value=item.riskLevel||'중';
+  document.getElementById('externalReceiver').value=item.receiverId||'';
+  document.getElementById('externalNote').value=item.note||'';
+  document.getElementById('externalIsClosed').value=item.isClosed||'N';
+  document.getElementById('externalWorkerCount').value=item.workerCount||'';
+  document.getElementById('externalSupervisorName').value=item.supervisorName||'';
+  document.getElementById('externalSupervisorPhone').value=item.supervisorPhone||'';
+  document.getElementById('externalPhotos').value='';
+  const firstLoc=getLocation((item.locationIds||[])[0]);
+  renderExternalLocationInputs(firstLoc ? firstLoc.group : '', item.locationIds||[]);
+  renderPhotoPreview(item.photos||[]);
+  document.getElementById('saveExternalBtn').textContent='수정 저장';
+}
+async function removeIncident(id){
+  if(!confirm('삭제하시겠습니까?')) return;
+  await deleteItem(STORES.incidents,id);
+  await loadState();
+}
+async function removeExternal(id){
+  if(!confirm('삭제하시겠습니까?')) return;
+  await deleteItem(STORES.externalWorks,id);
+  await loadState();
+}
+async function backupData(){
+  const data={exportedAt:new Date().toISOString(),...state};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='ops-management-db-v4-backup.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+async function restoreData(file){
+  if(!file) return;
+  const text=await file.text();
+  const data=JSON.parse(text);
+  if(!confirm('기존 데이터를 지우고 복원하시겠습니까?')) return;
+  for(const store of Object.values(STORES)) await clearStore(store);
+  for(const item of (data.incidents||[])) await putItem(STORES.incidents,item);
+  for(const item of (data.externalWorks||[])) await putItem(STORES.externalWorks,item);
+  for(const item of (data.companies||[])) await putItem(STORES.companies,item);
+  for(const item of (data.locations||[])) await putItem(STORES.locations,item);
+  for(const item of (data.receivers||[])) await putItem(STORES.receivers,item);
+  for(const item of (data.writers||[])) await putItem(STORES.writers,item);
+  await loadState();
+  alert('복원 완료');
+}
+function bindEvents(){
+  document.querySelectorAll('.nav-btn[data-main]').forEach(btn=>btn.addEventListener('click',()=>moveMain(Number(btn.dataset.main))));
+  document.querySelectorAll('[data-sub]').forEach(btn=>btn.addEventListener('click',()=>switchSub(btn.dataset.sub,btn.dataset.mode)));
+  document.getElementById('backupNavBtn').addEventListener('click',backupData);
+  document.getElementById('restoreFile').addEventListener('change',e=>restoreData(e.target.files[0]));
+
+  document.getElementById('addWriterBtn').addEventListener('click',()=>addMaster(STORES.writers,'writerInput'));
+  document.getElementById('addCompanyBtn').addEventListener('click',()=>addMaster(STORES.companies,'companyInput'));
+  document.getElementById('addLocationBtn').addEventListener('click',addLocation);
+  document.getElementById('addReceiverBtn').addEventListener('click',()=>addMaster(STORES.receivers,'receiverInput'));
+
+  document.getElementById('saveIncidentBtn').addEventListener('click',saveIncident);
+  document.getElementById('resetIncidentBtn').addEventListener('click',resetIncidentForm);
+  document.getElementById('saveExternalBtn').addEventListener('click',saveExternal);
+  document.getElementById('resetExternalBtn').addEventListener('click',resetExternalForm);
+
+  document.getElementById('incidentWriterFilter').addEventListener('change',renderIncidentList);
+  document.getElementById('incidentFilterNormal').addEventListener('change',renderIncidentList);
+
+  document.getElementById('externalDbModeBtn').addEventListener('click',()=>{
+    externalDbMode = externalDbMode === 'company' ? 'location' : 'company';
+    document.getElementById('externalDbSelect').value='';
+    document.getElementById('externalDbSubSelect').value='';
+    updateExternalDbSelectors();
+    renderExternalList();
+  });
+  document.getElementById('externalDbSelect').addEventListener('change',()=>{
+    const sub=document.getElementById('externalDbSubSelect');
+    if(externalDbMode==='location'){
+      const group=document.getElementById('externalDbSelect').value;
+      const subs=subsByGroup(group);
+      let html='<option value="">층</option>';
+      subs.forEach(loc=>{ html+='<option value="'+esc(loc.id)+'">'+esc(loc.sub)+'</option>'; });
+      sub.innerHTML=html;
+      sub.disabled=!group;
+      sub.style.display='';
+      sub.value='';
+    }else{
+      sub.disabled=true;
+      sub.style.display='none';
+      sub.value='';
+    }
+    renderExternalList();
+  });
+  document.getElementById('externalDbSubSelect').addEventListener('change',renderExternalList);
+  document.getElementById('externalFilterClosed').addEventListener('change',renderExternalList);
+
+  document.getElementById('externalLocationGroupSelect').addEventListener('change',()=>{
+    renderExternalLocationInputs(document.getElementById('externalLocationGroupSelect').value, []);
+  });
+
+  document.getElementById('externalPhotos').addEventListener('change',async e=>{
+    const files=e.target.files;
+    const newPhotos=files && files.length ? await filesToDataUrls(files) : [];
+    let existingPhotos=[];
+    if(editingExternalId){
+      const existing=state.externalWorks.find(x=>x.id===editingExternalId);
+      if(existing && existing.photos) existingPhotos=existing.photos;
+    }
+    renderPhotoPreview(existingPhotos.concat(newPhotos));
+  });
+}
+window.removeMaster=removeMaster;
+window.editIncident=editIncident;
+window.editExternal=editExternal;
+window.removeIncident=removeIncident;
+window.removeExternal=removeExternal;
+
+(async function init(){
+  bindEvents();
+  resetIncidentForm();
+  resetExternalForm();
+  switchSub('incident','form');
+  switchSub('external','form');
+  moveMain(0);
+  await loadState();
+})();
+</script>
+</body>
+</html>
