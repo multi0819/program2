@@ -2,21 +2,6 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-  <link rel="manifest" href="data:application/json,{
-    "name": "운전보고",
-    "short_name": "운전보고",
-    "start_url": ".",
-    "display": "standalone",
-    "background_color": "#1a1a2e",
-    "theme_color": "#FEE500",
-    "icons": [{"src": "data:image/png;base64,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", "sizes": "192x192", "type": "image/png"}]
-  }">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="운전보고">
-  <link rel="apple-touch-icon" href="data:image/png;base64,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">
-  <meta name="theme-color" content="#FEE500">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2블럭 운전보고</title>
 <style>
@@ -328,6 +313,13 @@ function getBlock() {
   return b.length ? b[0] : '2';
 }
 
+// 시간 포맷 (분이 00이면 'HH시', 아니면 'HH시MM분')
+function fmtTime(t) {
+  if (!t) return '??';
+  const [h, m] = t.split(':');
+  return m === '00' ? h+'시' : h+'시'+parseInt(m)+'분';
+}
+
 // 메시지 생성
 function buildMsg(idx) {
   const block = getBlock();
@@ -348,7 +340,7 @@ function buildMsg(idx) {
   if (idx === 2) {
     const temp  = document.getElementById('f2_temp').value || '??';
     const stopT = document.getElementById('f2_stopTime').value || '19:00';
-    const stopH = stopT.split(':')[0]+'시';
+    const stopH = fmtTime(stopT);
     const chiller = getSelected('chiller2').join(', ') || '??';
     const grouped = {};
     ['A','B','C','D','E','F'].forEach(d => {
@@ -356,11 +348,11 @@ function buildMsg(idx) {
       if (v) { if (!grouped[v]) grouped[v]=[]; grouped[v].push(d+'동'); }
     });
     let acuLine = Object.entries(grouped)
-      .map(([t,ds]) => ds.join(', ')+' '+t.split(':')[0]+':00 정지').join('\n                ');
+      .map(([t,ds]) => ds.join(', ')+' '+fmtTime(t)+' 정지').join('\n                ');
     if (!acuLine) acuLine = '-';
     const zoneDongs = getSelected('zone2').map(d => d+'동').join(', ') || '-';
     const zoneT = document.getElementById('f2_zoneTime').value || '19:00';
-    const zoneH = zoneT.split(':')[0]+'시';
+    const zoneH = fmtTime(zoneT);
     return `${header}\n■ 외기온도 : ${temp}℃\n■ 냉동기  : ${stopH} ${chiller} 정상 정지\n■ 공조기, FCU : ${acuLine}\n■ FCU Zone밸브 :  ${zoneDongs} ${zoneH} OFF 완료\n■ 시설물 이상유무 : 냉방장비 이상 없음`;
   }
   if (idx === 3) {
@@ -406,13 +398,6 @@ function showToast(msg) {
 }
 
 updatePreview(0);
-</script>
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(()=>{});
-  });
-}
 </script>
 </body>
 </html>
