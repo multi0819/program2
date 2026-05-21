@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2블럭 운전보고</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+  :root {
+    --kakao-dark: #3C1E1E;
+    --bg: #1a1a2e;
+    --surface: #16213e;
+    --card: #0f3460;
+    --accent: #FEE500;
+    --text: #eaeaea;
+    --text-muted: #8892b0;
+    --border: rgba(255,255,255,0.15);
+    --success: #4ade80;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 20px 16px 60px; }
+
+  .header { text-align: center; padding: 24px 0 20px; }
+  .header-badge { display: inline-block; background: var(--accent); color: var(--kakao-dark); font-size: 11px; font-weight: 700; letter-spacing: 2px; padding: 4px 14px; border-radius: 20px; margin-bottom: 10px; }
+  .header h1 { font-size: 22px; font-weight: 900; }
+  .header h1 span { color: var(--accent); }
+  .header p { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+
+  .tab-wrap { display: flex; gap: 6px; margin-bottom: 20px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
+  .tab-wrap::-webkit-scrollbar { display: none; }
+  .tab { flex: none; padding: 8px 14px; border-radius: 20px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-muted); font-size: 12px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: all .2s; -webkit-tap-highlight-color: transparent; }
+  .tab.active { background: var(--accent); color: var(--kakao-dark); border-color: var(--accent); font-weight: 700; }
+
+  .section-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 8px; margin-top: 20px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; margin-bottom: 14px; }
+
+  /* 입력 행 */
+  .input-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .input-row:last-child { margin-bottom: 0; }
+  .input-row label { font-size: 12px; color: var(--text-muted); min-width: 100px; font-weight: 500; }
+  .input-row input, .input-row select {
+    flex: 1; background: var(--card); border: 1.5px solid var(--border);
+    border-radius: 8px; color: var(--text); font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px; padding: 10px 12px; outline: none; transition: border-color .2s;
+    -webkit-appearance: none; width: 0; min-width: 0;
+  }
+  .input-row input:focus, .input-row select:focus { border-color: var(--accent); }
+  .unit { font-size: 14px; color: var(--text-muted); white-space: nowrap; }
+
+  /* 토글 버튼 공통 */
+  .toggle-wrap { display: flex; gap: 8px; flex-wrap: wrap; }
+  .toggle-btn {
+    padding: 8px 16px; border-radius: 20px; border: 1.5px solid var(--border);
+    background: var(--card); color: var(--text-muted); font-size: 13px; font-weight: 600;
+    cursor: pointer; transition: all .15s; user-select: none; -webkit-tap-highlight-color: transparent;
+  }
+  .toggle-btn.selected { background: var(--accent); color: var(--kakao-dark); border-color: var(--accent); }
+
+  /* 미리보기 */
+  .preview-box { background: #b2c7da; border-radius: var(--radius); padding: 14px; margin-top: 4px; }
+  .preview-bubble { background: #fff; border-radius: 0 12px 12px 12px; padding: 14px 16px; font-size: 14px; line-height: 2; color: #222; white-space: pre-wrap; word-break: keep-all; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
+
+  .btn-copy { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 16px; padding: 16px; background: var(--accent); color: var(--kakao-dark); font-family: 'Noto Sans KR', sans-serif; font-size: 16px; font-weight: 700; border: none; border-radius: var(--radius); cursor: pointer; -webkit-tap-highlight-color: transparent; transition: opacity .15s; }
+  .btn-copy:active { opacity: 0.8; }
+
+  .form-section { display: none; }
+  .form-section.active { display: block; }
+
+  .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--success); color: #000; padding: 12px 24px; border-radius: 30px; font-size: 14px; font-weight: 700; transition: transform .3s ease; z-index: 999; white-space: nowrap; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .date-info { font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-badge" id="headerBadge">G2BL · 2블럭</div>
+  <h1>운전보고 <span>메시지</span></h1>
+  <p>내용 입력 → 복사 → 카톡 붙여넣기</p>
+</div>
+
+<div class="tab-wrap">
+  <div class="tab active" onclick="switchTab(0)">① 가동 전</div>
+  <div class="tab" onclick="switchTab(1)">② 운전 후</div>
+  <div class="tab" onclick="switchTab(2)">③ 운전 완료</div>
+  <div class="tab" onclick="switchTab(3)">④ 난방 운전</div>
+</div>
+
+<!-- 블럭 선택 (공통) -->
+<div class="section-label">블럭 선택</div>
+<div class="card" style="padding:12px 16px;">
+  <div class="toggle-wrap">
+    <div class="toggle-btn" data-group="block" data-val="1" onclick="toggleSingle(this,'block')">1블럭</div>
+    <div class="toggle-btn selected" data-group="block" data-val="2" onclick="toggleSingle(this,'block')">2블럭</div>
+  </div>
+</div>
+
+<!-- ===== 양식 1: 가동 전 ===== -->
+<div class="form-section active" id="form0">
+  <div class="section-label">기본 정보</div>
+  <div class="card">
+    <div class="input-row">
+      <label>외기온도</label>
+      <input type="number" id="f0_temp" placeholder="10.0" step="0.1" inputmode="decimal" oninput="updatePreview(0)">
+      <span class="unit">℃</span>
+    </div>
+  </div>
+  <div class="section-label">미리보기</div>
+  <div class="preview-box"><div class="preview-bubble" id="preview0"></div></div>
+  <button class="btn-copy" onclick="copyMsg(0)">📋 메시지 복사 &amp; 카톡 열기</button>
+</div>
+
+<!-- ===== 양식 2: 운전 후 ===== -->
+<div class="form-section" id="form1">
+  <div class="section-label">기본 정보</div>
+  <div class="card">
+    <div class="input-row">
+      <label>외기온도</label>
+      <input type="number" id="f1_temp" placeholder="23.0" step="0.1" inputmode="decimal" oninput="updatePreview(1)">
+      <span class="unit">℃</span>
+    </div>
+    <div class="input-row">
+      <label>기동 시간</label>
+      <input type="time" id="f1_startTime" value="08:00" onchange="updatePreview(1)">
+    </div>
+    <div class="input-row">
+      <label>정지 시간</label>
+      <input type="time" id="f1_endTime" value="19:00" onchange="updatePreview(1)">
+    </div>
+  </div>
+
+  <div class="section-label">냉동기 종류 선택</div>
+  <div class="card">
+    <div class="toggle-wrap">
+      <div class="toggle-btn" data-group="chiller1" data-val="터보" onclick="toggleMulti(this,'chiller1')">터보</div>
+      <div class="toggle-btn selected" data-group="chiller1" data-val="흡수기1호기" onclick="toggleMulti(this,'chiller1')">흡수기1호기</div>
+      <div class="toggle-btn selected" data-group="chiller1" data-val="흡수기2호기" onclick="toggleMulti(this,'chiller1')">흡수기2호기</div>
+    </div>
+  </div>
+
+  <div class="section-label">가동 동(棟) 선택</div>
+  <div class="card">
+    <div class="toggle-wrap">
+      <div class="toggle-btn" data-group="dong1" data-val="A" onclick="toggleMulti(this,'dong1')">A동</div>
+      <div class="toggle-btn" data-group="dong1" data-val="B" onclick="toggleMulti(this,'dong1')">B동</div>
+      <div class="toggle-btn selected" data-group="dong1" data-val="C" onclick="toggleMulti(this,'dong1')">C동</div>
+      <div class="toggle-btn selected" data-group="dong1" data-val="D" onclick="toggleMulti(this,'dong1')">D동</div>
+      <div class="toggle-btn selected" data-group="dong1" data-val="E" onclick="toggleMulti(this,'dong1')">E동</div>
+      <div class="toggle-btn selected" data-group="dong1" data-val="F" onclick="toggleMulti(this,'dong1')">F동</div>
+    </div>
+  </div>
+  <div class="section-label">미리보기</div>
+  <div class="preview-box"><div class="preview-bubble" id="preview1"></div></div>
+  <button class="btn-copy" onclick="copyMsg(1)">📋 메시지 복사 &amp; 카톡 열기</button>
+</div>
+
+<!-- ===== 양식 3: 운전 완료 ===== -->
+<div class="form-section" id="form2">
+  <div class="section-label">기본 정보</div>
+  <div class="card">
+    <div class="input-row">
+      <label>외기온도</label>
+      <input type="number" id="f2_temp" placeholder="20.0" step="0.1" inputmode="decimal" oninput="updatePreview(2)">
+      <span class="unit">℃</span>
+    </div>
+    <div class="input-row">
+      <label>냉동기 정지</label>
+      <input type="time" id="f2_stopTime" value="19:00" onchange="updatePreview(2)">
+    </div>
+  </div>
+
+  <div class="section-label">냉동기 종류 선택</div>
+  <div class="card">
+    <div class="toggle-wrap">
+      <div class="toggle-btn" data-group="chiller2" data-val="터보" onclick="toggleMulti(this,'chiller2')">터보</div>
+      <div class="toggle-btn selected" data-group="chiller2" data-val="흡수기1호기" onclick="toggleMulti(this,'chiller2')">흡수기1호기</div>
+      <div class="toggle-btn selected" data-group="chiller2" data-val="흡수기2호기" onclick="toggleMulti(this,'chiller2')">흡수기2호기</div>
+    </div>
+  </div>
+
+  <div class="section-label">공조기/FCU 동별 정지 시간</div>
+  <div class="card">
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">입력한 동만 메시지에 포함됩니다</div>
+    <div class="input-row"><label>A동 정지</label><input type="time" id="f2_A" onchange="updatePreview(2)"></div>
+    <div class="input-row"><label>B동 정지</label><input type="time" id="f2_B" onchange="updatePreview(2)"></div>
+    <div class="input-row"><label>C동 정지</label><input type="time" id="f2_C" onchange="updatePreview(2)"></div>
+    <div class="input-row"><label>D동 정지</label><input type="time" id="f2_D" onchange="updatePreview(2)"></div>
+    <div class="input-row"><label>E동 정지</label><input type="time" id="f2_E" onchange="updatePreview(2)"></div>
+    <div class="input-row"><label>F동 정지</label><input type="time" id="f2_F" onchange="updatePreview(2)"></div>
+  </div>
+
+  <div class="section-label">FCU Zone밸브 OFF 동(棟)</div>
+  <div class="card">
+    <div class="toggle-wrap">
+      <div class="toggle-btn" data-group="zone2" data-val="A" onclick="toggleMulti(this,'zone2')">A동</div>
+      <div class="toggle-btn" data-group="zone2" data-val="B" onclick="toggleMulti(this,'zone2')">B동</div>
+      <div class="toggle-btn" data-group="zone2" data-val="C" onclick="toggleMulti(this,'zone2')">C동</div>
+      <div class="toggle-btn selected" data-group="zone2" data-val="D" onclick="toggleMulti(this,'zone2')">D동</div>
+      <div class="toggle-btn selected" data-group="zone2" data-val="E" onclick="toggleMulti(this,'zone2')">E동</div>
+      <div class="toggle-btn selected" data-group="zone2" data-val="F" onclick="toggleMulti(this,'zone2')">F동</div>
+    </div>
+    <div class="input-row" style="margin-top:12px;">
+      <label>Zone OFF 시간</label>
+      <input type="time" id="f2_zoneTime" value="19:00" onchange="updatePreview(2)">
+    </div>
+  </div>
+  <div class="section-label">미리보기</div>
+  <div class="preview-box"><div class="preview-bubble" id="preview2"></div></div>
+  <button class="btn-copy" onclick="copyMsg(2)">📋 메시지 복사 &amp; 카톡 열기</button>
+</div>
+
+<!-- ===== 양식 4: 난방 운전 ===== -->
+<div class="form-section" id="form3">
+  <div class="section-label">기본 정보</div>
+  <div class="card">
+    <div class="input-row">
+      <label>외기온도</label>
+      <input type="number" id="f3_temp" placeholder="-4.7" step="0.1" inputmode="decimal" oninput="updatePreview(3)">
+      <span class="unit">℃</span>
+    </div>
+    <div class="input-row">
+      <label>열교환기 설정온도</label>
+      <input type="number" id="f3_heatTemp" placeholder="55" step="1" inputmode="numeric" oninput="updatePreview(3)">
+      <span class="unit">℃</span>
+    </div>
+    <div class="input-row">
+      <label>기준 시간</label>
+      <input type="time" id="f3_baseTime" value="06:00" onchange="updatePreview(3)">
+    </div>
+  </div>
+  <div class="section-label">운전 상태</div>
+  <div class="card">
+    <div class="input-row">
+      <label>FCU/FPU Zone V/V</label>
+      <select id="f3_zone" onchange="updatePreview(3)">
+        <option value="열기(Open)">열기(Open)</option>
+        <option value="닫기(Close)">닫기(Close)</option>
+        <option value="이상없음">이상없음</option>
+      </select>
+    </div>
+    <div class="input-row">
+      <label>공조기 외기댐퍼</label>
+      <select id="f3_damper" onchange="updatePreview(3)">
+        <option value="이상없음">이상없음</option>
+        <option value="이상있음">이상있음</option>
+      </select>
+    </div>
+    <div class="input-row">
+      <label>동파방지 운전</label>
+      <select id="f3_freeze" onchange="updatePreview(3)">
+        <option value="공조기 내부히터 작동 확인">내부히터 작동 확인</option>
+        <option value="공조기 내부히터 미작동">내부히터 미작동</option>
+        <option value="해당없음">해당없음</option>
+      </select>
+    </div>
+  </div>
+  <div class="section-label">미리보기</div>
+  <div class="preview-box"><div class="preview-bubble" id="preview3"></div></div>
+  <button class="btn-copy" onclick="copyMsg(3)">📋 메시지 복사 &amp; 카톡 열기</button>
+</div>
+
+<div class="date-info" id="dateInfo"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+let currentTab = 0;
+
+// 날짜 & 자동삭제
+const today = new Date();
+const todayKey = today.toISOString().slice(0,10);
+document.getElementById('dateInfo').textContent =
+  today.getFullYear()+'년 '+(today.getMonth()+1)+'월 '+today.getDate()+'일 · 익일 자동삭제';
+(function(){
+  const s = localStorage.getItem('report_date');
+  if (s && s !== todayKey) localStorage.clear();
+  localStorage.setItem('report_date', todayKey);
+})();
+
+// 탭
+function switchTab(idx) {
+  currentTab = idx;
+  document.querySelectorAll('.form-section').forEach((el,i) => el.classList.toggle('active', i===idx));
+  document.querySelectorAll('.tab').forEach((el,i) => el.classList.toggle('active', i===idx));
+  updatePreview(idx);
+}
+
+// 단일선택 토글 (블럭)
+function toggleSingle(el, group) {
+  document.querySelectorAll(`.toggle-btn[data-group="${group}"]`).forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  // 헤더 배지 업데이트
+  if (group === 'block') {
+    const val = el.dataset.val;
+    document.getElementById('headerBadge').textContent = 'G2BL · ' + val + '블럭';
+  }
+  updatePreview(currentTab);
+}
+
+// 다중선택 토글 (냉동기, 동)
+function toggleMulti(el, group) {
+  el.classList.toggle('selected');
+  updatePreview(currentTab);
+}
+
+// 선택값 가져오기
+function getSelected(group) {
+  return [...document.querySelectorAll(`.toggle-btn[data-group="${group}"].selected`)]
+    .map(el => el.dataset.val);
+}
+function getBlock() {
+  const b = getSelected('block');
+  return b.length ? b[0] : '2';
+}
+
+// 시간 포맷 (분이 00이면 'HH시', 아니면 'HH시MM분')
+function fmtTime(t) {
+  if (!t) return '??';
+  const [h, m] = t.split(':');
+  return m === '00' ? h+'시' : h+'시'+parseInt(m)+'분';
+}
+
+// 메시지 생성
+function buildMsg(idx) {
+  const block = getBlock();
+  const header = `【 G2BL - ${block}블럭 】`;
+
+  if (idx === 0) {
+    const temp = document.getElementById('f0_temp').value || '??';
+    return `${header}\n■ 외기온도 : ${temp}℃\n■ 냉동기  : 가동 전\n■ 공조기, FCU : 가동 전\n■ 시설물 이상유무 : 냉방장비 이상 없음`;
+  }
+  if (idx === 1) {
+    const temp  = document.getElementById('f1_temp').value || '??';
+    const st    = document.getElementById('f1_startTime').value || '08:00';
+    const et    = document.getElementById('f1_endTime').value || '19:00';
+    const chiller = getSelected('chiller1').join(', ') || '??';
+    const dongs   = getSelected('dong1').map(d => d+'동').join(', ') || '??';
+    return `${header}\n■ 외기온도 : ${temp}℃\n■ 냉 동 기  : ${st} ${chiller} 정상 가동\n■ 공조기, FCU : ${dongs} ${st}~${et} 가동\n■ 시설물 이상유무 : 냉방장비 이상 없음`;
+  }
+  if (idx === 2) {
+    const temp  = document.getElementById('f2_temp').value || '??';
+    const stopT = document.getElementById('f2_stopTime').value || '19:00';
+    const stopH = fmtTime(stopT);
+    const chiller = getSelected('chiller2').join(', ') || '??';
+    const grouped = {};
+    ['A','B','C','D','E','F'].forEach(d => {
+      const v = document.getElementById('f2_'+d).value;
+      if (v) { if (!grouped[v]) grouped[v]=[]; grouped[v].push(d+'동'); }
+    });
+    let acuLine = Object.entries(grouped)
+      .map(([t,ds]) => ds.join(', ')+' '+fmtTime(t)+' 정지').join('\n                ');
+    if (!acuLine) acuLine = '-';
+    const zoneDongs = getSelected('zone2').map(d => d+'동').join(', ') || '-';
+    const zoneT = document.getElementById('f2_zoneTime').value || '19:00';
+    const zoneH = fmtTime(zoneT);
+    return `${header}\n■ 외기온도 : ${temp}℃\n■ 냉동기  : ${stopH} ${chiller} 정상 정지\n■ 공조기, FCU : ${acuLine}\n■ FCU Zone밸브 :  ${zoneDongs} ${zoneH} OFF 완료\n■ 시설물 이상유무 : 냉방장비 이상 없음`;
+  }
+  if (idx === 3) {
+    const temp   = document.getElementById('f3_temp').value || '??';
+    const ht     = document.getElementById('f3_heatTemp').value || '55';
+    const bt     = document.getElementById('f3_baseTime').value || '06:00';
+    const zone   = document.getElementById('f3_zone').value;
+    const damper = document.getElementById('f3_damper').value;
+    const freeze = document.getElementById('f3_freeze').value;
+    return `${header}\n■ 외기온도 : ${temp}℃\n■ 열교환기 설정온도 : ${ht}℃(${bt} 기준)\n■ FCU/FPU Zone V/V : ${zone}\n■ 공조기 외기댐퍼 이상유무 : ${damper}\n■ 동파방지 운전 : ${freeze}\n■ 시설물 이상 유무 : 난방장비 이상 없음`;
+  }
+  return '';
+}
+
+// 미리보기
+function updatePreview(idx) {
+  const el = document.getElementById('preview'+idx);
+  if (el) el.textContent = buildMsg(idx);
+}
+
+// 복사 + 카톡 열기
+function copyMsg(idx) {
+  const msg = buildMsg(idx);
+  const ta = document.createElement('textarea');
+  ta.value = msg;
+  ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;font-size:16px;';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select(); ta.setSelectionRange(0, 99999);
+  let ok = false;
+  try { ok = document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+  if (!ok && navigator.clipboard) { navigator.clipboard.writeText(msg).catch(()=>{}); ok=true; }
+  showToast('📋 복사 완료! 카톡이 열립니다.');
+  setTimeout(() => { window.location.href = 'kakaotalk://launch'; }, 500);
+}
+
+// 토스트
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+updatePreview(0);
+</script>
+</body>
+</html>
