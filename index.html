@@ -593,8 +593,8 @@ body.app-body{max-width:480px;margin:0 auto;padding:18px 18px 44px!important;ove
 <div class="card seg-card">
 <div class="toggle-wrap">
 <div class="toggle-btn" data-group="chiller1" data-val="터보" onclick="toggleMulti(this)">터보</div>
-<div class="toggle-btn selected" data-group="chiller1" data-val="흡수기1호기" onclick="toggleMulti(this)">흡수기1호기</div>
-<div class="toggle-btn selected" data-group="chiller1" data-val="흡수기2호기" onclick="toggleMulti(this)">흡수기2호기</div>
+<div class="toggle-btn selected" data-group="chiller1" data-val="흡수식1호기" onclick="toggleMulti(this)">흡수식1호기</div>
+<div class="toggle-btn selected" data-group="chiller1" data-val="흡수식2호기" onclick="toggleMulti(this)">흡수식2호기</div>
 </div>
 </div>
 <div class="section-label">공조기 동별 가동 예정시간</div>
@@ -642,15 +642,15 @@ body.app-body{max-width:480px;margin:0 auto;padding:18px 18px 44px!important;ove
 <div class="card compact-card seg-card">
 <div class="toggle-wrap one-line">
 <div class="toggle-btn" data-group="chiller2" data-val="터보" onclick="toggleMulti(this)">터보</div>
-<div class="toggle-btn selected" data-group="chiller2" data-val="흡수기1호기" onclick="toggleMulti(this)">흡수기1호기</div>
-<div class="toggle-btn selected" data-group="chiller2" data-val="흡수기2호기" onclick="toggleMulti(this)">흡수기2호기</div>
+<div class="toggle-btn selected" data-group="chiller2" data-val="흡수식1호기" onclick="toggleMulti(this)">흡수식1호기</div>
+<div class="toggle-btn selected" data-group="chiller2" data-val="흡수식2호기" onclick="toggleMulti(this)">흡수식2호기</div>
 </div>
 </div>
 <div class="section-label">냉동기별 정지 시간</div>
 <div class="card stop-list">
 <div class="input-row"><label>터보 정지</label><input id="f2_stop_turbo" onchange="updatePreview(2)" type="time"/></div>
-<div class="input-row"><label>흡수기1호기 정지</label><input id="f2_stop_abs1" onchange="updatePreview(2)" type="time" value="19:00"/></div>
-<div class="input-row"><label>흡수기2호기 정지</label><input id="f2_stop_abs2" onchange="updatePreview(2)" type="time" value="19:00"/></div>
+<div class="input-row"><label>흡수식1호기 정지</label><input id="f2_stop_abs1" onchange="updatePreview(2)" type="time" value="19:00"/></div>
+<div class="input-row"><label>흡수식2호기 정지</label><input id="f2_stop_abs2" onchange="updatePreview(2)" type="time" value="19:00"/></div>
 </div>
 <div class="section-label">공조기/FCU 정지 시간</div>
 <div class="card stop-list">
@@ -1047,8 +1047,8 @@ function buildMsg(idx) {
     const temp = document.getElementById('f2_temp').value || '??';
     const stopMap = {
       '터보': document.getElementById('f2_stop_turbo').value,
-      '흡수기1호기': document.getElementById('f2_stop_abs1').value || '19:00',
-      '흡수기2호기': document.getElementById('f2_stop_abs2').value || '19:00'
+      '흡수식1호기': document.getElementById('f2_stop_abs1').value || '19:00',
+      '흡수식2호기': document.getElementById('f2_stop_abs2').value || '19:00'
     };
     const selectedChillers = getSelected('chiller2');
     const chillerLine = selectedChillers.length
