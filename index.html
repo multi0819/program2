@@ -60,9 +60,9 @@
   .input-row{display:flex;align-items:center;gap:12px;margin:0;min-width:0}
   .input-row+ .input-row{margin-top:10px}
   .input-row label{min-width:92px;color:#c0cada;font-size:18px;font-weight:800;white-space:nowrap}
-  .input-row input,.input-row select,.add-item-row input,#f4_note{height:54px;width:100%;min-width:0;background:rgba(4,15,28,.72)!important;border:1.5px solid var(--line2)!important;border-radius:13px!important;color:#fff!important;font-family:inherit!important;font-size:22px!important;font-weight:900!important;padding:0 14px!important;outline:none;text-align:center;appearance:none;-webkit-appearance:none}
-  .input-row input::placeholder,#f4_note::placeholder{color:#8d98a8;opacity:1}
-  .input-row input:focus,.input-row select:focus,.add-item-row input:focus,#f4_note:focus{border-color:var(--yellow)!important;box-shadow:0 0 0 2px rgba(254,229,0,.12)}
+  .input-row input,.input-row select,.add-item-row input{height:54px;width:100%;min-width:0;background:rgba(4,15,28,.72)!important;border:1.5px solid var(--line2)!important;border-radius:13px!important;color:#fff!important;font-family:inherit!important;font-size:22px!important;font-weight:900!important;padding:0 14px!important;outline:none;text-align:center;appearance:none;-webkit-appearance:none}
+  .input-row input::placeholder::placeholder{color:#8d98a8;opacity:1}
+  .input-row input:focus,.input-row select:focus,.add-item-row input:focus:focus{border-color:var(--yellow)!important;box-shadow:0 0 0 2px rgba(254,229,0,.12)}
   .unit{font-size:23px;font-weight:900;color:#f4f7fb;min-width:34px;text-align:center}
   input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{opacity:0}
 
@@ -120,7 +120,7 @@
   .input-row{gap:9px!important;}
   .input-row+ .input-row{margin-top:8px!important;}
   .input-row label{min-width:78px!important;font-size:14px!important;}
-  .input-row input,.input-row select,.add-item-row input,#f4_note{height:44px!important;border-radius:11px!important;font-size:17px!important;padding:0 10px!important;}
+  .input-row input,.input-row select,.add-item-row input{height:44px!important;border-radius:11px!important;font-size:17px!important;padding:0 10px!important;}
   .unit{font-size:18px!important;min-width:28px!important;}
 
   .card:has(#f0_temp){padding:14px 18px!important;}
@@ -526,6 +526,8 @@ body.app-body{max-width:480px;margin:0 auto;padding:18px 18px 44px!important;ove
   .card.info-triple input[type="time"]{font-size:11.5px!important;letter-spacing:-.16em!important;transform:scaleX(.9)!important;}
 }
 
+.report-note {width:100%;box-sizing:border-box;background:var(--card);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font:inherit;font-size:20px;padding:14px;resize:vertical;min-height:100px;}
+.report-note:focus {outline:2px solid var(--accent,#ffe600);}
 </style>
 </head>
 <body class="app-body">
@@ -560,6 +562,8 @@ body.app-body{max-width:480px;margin:0 auto;padding:18px 18px 44px!important;ove
 <span class="unit">℃</span>
 </div>
 </div>
+<div class="section-label">특이사항 (없으면 이상없음)</div>
+<div class="card"><textarea id="f0_note" rows="3" oninput="updatePreview(0)" placeholder="특이사항 입력 (없으면 비워두세요)" class="report-note"></textarea></div>
 <div class="section-label">미리보기</div>
 <div class="preview-box"><div class="preview-bubble" id="preview0"></div></div>
 <div class="action-bar"><button class="btn-reset" onclick="resetForm(0)">⌫ 초기화</button><button class="btn-copy" onclick="copyMsg(0)">✈ 메시지 복사 &amp; 카톡 열기</button></div>
@@ -617,6 +621,8 @@ body.app-body{max-width:480px;margin:0 auto;padding:18px 18px 44px!important;ove
 <div class="toggle-btn selected" data-group="fcu1" data-val="F" onclick="toggleMulti(this)">F동</div>
 </div>
 </div>
+<div class="section-label">특이사항 (없으면 이상없음)</div>
+<div class="card"><textarea id="f1_note" rows="3" oninput="updatePreview(1)" placeholder="특이사항 입력 (없으면 비워두세요)" class="report-note"></textarea></div>
 <div class="section-label">미리보기</div>
 <div class="preview-box"><div class="preview-bubble" id="preview1"></div></div>
 <div class="action-bar"><button class="btn-reset" onclick="resetForm(1)">⌫ 초기화</button><button class="btn-copy" onclick="copyMsg(1)">✈ 메시지 복사 &amp; 카톡 열기</button></div>
@@ -677,6 +683,8 @@ body.app-body{max-width:480px;margin:0 auto;padding:18px 18px 44px!important;ove
 <input id="f2_zoneTime" onchange="updatePreview(2)" type="time" value="19:00"/>
 </div>
 </div>
+<div class="section-label">특이사항 (없으면 이상없음)</div>
+<div class="card"><textarea id="f2_note" rows="3" oninput="updatePreview(2)" placeholder="특이사항 입력 (없으면 비워두세요)" class="report-note"></textarea></div>
 <div class="section-label">미리보기</div>
 <div class="preview-box"><div class="preview-bubble" id="preview2"></div></div>
 <div class="action-bar"><button class="btn-reset" onclick="resetForm(2)">⌫ 초기화</button><button class="btn-copy" onclick="copyMsg(2)">✈ 메시지 복사 &amp; 카톡 열기</button></div>
@@ -733,6 +741,8 @@ body.app-body{max-width:480px;margin:0 auto;padding:18px 18px 44px!important;ove
 </select>
 </div>
 </div>
+<div class="section-label">특이사항 (없으면 이상없음)</div>
+<div class="card"><textarea id="f3_note" rows="3" oninput="updatePreview(3)" placeholder="특이사항 입력 (없으면 비워두세요)" class="report-note"></textarea></div>
 <div class="section-label">미리보기</div>
 <div class="preview-box"><div class="preview-bubble" id="preview3"></div></div>
 <div class="action-bar"><button class="btn-reset" onclick="resetForm(3)">⌫ 초기화</button><button class="btn-copy" onclick="copyMsg(3)">✈ 메시지 복사 &amp; 카톡 열기</button></div>
@@ -745,10 +755,6 @@ body.app-body{max-width:480px;margin:0 auto;padding:18px 18px 44px!important;ove
 <div class="toggle-btn" data-group="block" data-val="1" onclick="toggleSingle(this,'block')">1블럭</div>
 <div class="toggle-btn selected" data-group="block" data-val="2" onclick="toggleSingle(this,'block')">2블럭</div>
 </div>
-</div>
-<div class="section-label">특이사항 (있을 때만 입력)</div>
-<div class="card">
-<input id="f4_note" oninput="updatePreview(4)" placeholder="특이사항 입력 (없으면 비워두세요)" style="width:100%;background:var(--card);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:inherit;font-size:14px;padding:10px 12px;outline:none;" type="text"/>
 </div>
 <div class="section-label">위치</div>
 <div class="card scroll-card">
@@ -769,6 +775,7 @@ body.app-body{max-width:480px;margin:0 auto;padding:18px 18px 44px!important;ove
 <option value="지하">지하</option>
 </select>
 </div>
+<div class="add-item-row" style="margin-top:12px"><input id="newInspectionPlace" type="text" placeholder="새 점검 장소 입력" onkeydown="if(event.key==='Enter'){event.preventDefault();addInspectionPlace();}"/><button class="btn-add" onclick="addInspectionPlace()" aria-label="점검 장소 추가">+</button></div>
 </div>
 <div class="section-label">점검 내용 선택</div>
 <div class="card">
@@ -787,6 +794,8 @@ body.app-body{max-width:480px;margin:0 auto;padding:18px 18px 44px!important;ove
 <div class="toggle-btn" data-group="result" data-val="조치완료" onclick="toggleSingle(this,'result')" style="padding:7px 12px;font-size:13px;">🔧 조치완료</div>
 </div>
 </div>
+<div class="section-label">결과 특이사항 (없으면 이상없음)</div>
+<div class="card"><textarea id="f4_note" rows="3" oninput="updatePreview(4)" placeholder="특이사항 입력 (없으면 비워두세요)" class="report-note"></textarea></div>
 <div class="section-label">미리보기</div>
 <div class="preview-box"><div class="preview-bubble" id="preview4"></div></div>
 <div class="action-bar"><button class="btn-reset" onclick="resetForm(4)">⌫ 초기화</button><button class="btn-copy" onclick="copyMsg(4)">✈ 메시지 복사 &amp; 카톡 열기</button></div>
@@ -852,6 +861,8 @@ body.app-body{max-width:480px;margin:0 auto;padding:18px 18px 44px!important;ove
 <div class="photo-grid" id="workPhotoGrid"></div>
 <button class="photo-add-btn" id="savePhotosBtn" onclick="savePhotos()" style="display:none;margin-top:8px;border-color:#4ade80;color:#4ade80;">💾 사진 갤러리에 저장</button>
 </div>
+<div class="section-label">특이사항 (없으면 이상없음)</div>
+<div class="card"><textarea id="f5_note" rows="3" oninput="updatePreview(5)" placeholder="특이사항 입력 (없으면 비워두세요)" class="report-note"></textarea></div>
 <div class="section-label">미리보기</div>
 <div class="preview-box"><div class="preview-bubble" id="preview5"></div></div>
 <div class="action-bar"><button class="btn-reset" onclick="resetForm(5)">⌫ 초기화</button><button class="btn-copy" onclick="copyMsg(5)">✈ 메시지 복사 &amp; 카톡 열기</button></div>
@@ -1019,6 +1030,33 @@ function buildAhuScheduleLine(){
   return lines.length ? lines.join(', ') : '??';
 }
 
+function reportNote(idx) {
+  return document.getElementById('f'+idx+'_note').value.trim() || '이상없음';
+}
+const INSPECTION_PLACES_KEY = 'inspection_places_v1';
+function loadInspectionPlaces() {
+  try {
+    const places = JSON.parse(localStorage.getItem(INSPECTION_PLACES_KEY) || '[]');
+    if (!Array.isArray(places)) return;
+    const select = document.getElementById('f4_place');
+    places.filter(p=>typeof p==='string' && p.trim()).forEach(p=>{
+      if (![...select.options].some(o=>o.value===p)) select.add(new Option(p,p));
+    });
+  } catch(e) {}
+}
+function addInspectionPlace() {
+  const input = document.getElementById('newInspectionPlace');
+  const place = input.value.trim();
+  if (!place) { showToast('점검 장소를 입력하세요'); return; }
+  const select = document.getElementById('f4_place');
+  if (![...select.options].some(o=>o.value===place)) {
+    select.add(new Option(place,place));
+    try { localStorage.setItem(INSPECTION_PLACES_KEY, JSON.stringify([...select.options].map(o=>o.value))); }
+    catch(e) { showToast('저장 공간이 부족하여 장소를 저장하지 못했습니다'); }
+  }
+  select.value=place; input.value=''; updatePreview(4);
+}
+
 // 메시지 생성
 function buildMsg(idx) {
   const block = getBlock();
@@ -1026,7 +1064,7 @@ function buildMsg(idx) {
 
   if (idx === 0) {
     const temp = document.getElementById('f0_temp').value || '??';
-    return `${header}\n■ 외기온도 : ${temp}℃\n■ 냉동기  : 가동 전\n■ 공조기, FCU : 가동 전\n■ 시설물 이상유무 : 냉방장비 이상 없음`;
+    return `${header}\n■ 외기온도 : ${temp}℃\n■ 냉동기  : 가동 전\n■ 공조기, FCU : 가동 전\n■ 시설물 이상유무 : ${reportNote(idx)}`;
   }
   if (idx === 1) {
     const temp = document.getElementById('f1_temp').value || '??';
@@ -1041,7 +1079,7 @@ function buildMsg(idx) {
 ■ 냉 동 기  : ${fmtTime(st)} ${chiller} 정상 가동
 ■ 공조기 : ${ahuSchedule} 가동
 ■ FCU : ${fcuDongs} ${fcuTimeRange} 가동
-■ 시설물 이상유무 : 냉방장비 이상 없음`;
+■ 시설물 이상유무 : ${reportNote(idx)}`;
   }
   if (idx === 2) {
     const temp = document.getElementById('f2_temp').value || '??';
@@ -1064,7 +1102,7 @@ function buildMsg(idx) {
     if (!acuLine) acuLine = '-';
     const zoneDongs = getSelected('zone2').map(d => d+'동').join(', ') || '-';
     const zoneT = document.getElementById('f2_zoneTime').value || '19:00';
-    return `${header}\n■ 외기온도 : ${temp}℃\n■ 냉동기  : ${chillerLine}\n■ 공조기, FCU : ${acuLine}\n■ FCU Zone밸브 :  ${zoneDongs} ${fmtTime(zoneT)} OFF 완료\n■ 시설물 이상유무 : 냉방장비 이상 없음`;
+    return `${header}\n■ 외기온도 : ${temp}℃\n■ 냉동기  : ${chillerLine}\n■ 공조기, FCU : ${acuLine}\n■ FCU Zone밸브 :  ${zoneDongs} ${fmtTime(zoneT)} OFF 완료\n■ 시설물 이상유무 : ${reportNote(idx)}`;
   }
   if (idx === 3) {
     const temp = document.getElementById('f3_temp').value || '??';
@@ -1073,7 +1111,7 @@ function buildMsg(idx) {
     const zone = document.getElementById('f3_zone').value;
     const damper = document.getElementById('f3_damper').value;
     const freeze = document.getElementById('f3_freeze').value;
-    return `${header}\n■ 외기온도 : ${temp}℃\n■ 열교환기 설정온도 : ${ht}℃(${bt} 기준)\n■ FCU/FPU Zone V/V : ${zone}\n■ 공조기 외기댐퍼 이상유무 : ${damper}\n■ 동파방지 운전 : ${freeze}\n■ 시설물 이상 유무 : 난방장비 이상 없음`;
+    return `${header}\n■ 외기온도 : ${temp}℃\n■ 열교환기 설정온도 : ${ht}℃(${bt} 기준)\n■ FCU/FPU Zone V/V : ${zone}\n■ 공조기 외기댐퍼 이상유무 : ${damper}\n■ 동파방지 운전 : ${freeze}\n■ 시설물 이상 유무 : ${reportNote(idx)}`;
   }
   if (idx === 5) {
     const block = getBlock();
@@ -1087,7 +1125,8 @@ function buildMsg(idx) {
 ■ 위치 : ${wlocations.length ? wlocations.map(i=>i.text).join(', ') : '??'}
 ■ 업체 : ${wcompany ? wcompany.text : '??'}
 ■ 작업인원 : ${workers}명
-■ 위험작업 : ${wrisk ? wrisk.text : '없음'}`;
+■ 위험작업 : ${wrisk ? wrisk.text : '없음'}
+■ 특이사항 : ${reportNote(idx)}`;
   }
   if (idx === 4) {
     const blk = getBlock();
@@ -1095,10 +1134,11 @@ function buildMsg(idx) {
     const place = document.getElementById('f4_place').value;
     const selected = contentItems.filter(i => i.selected);
     const contentTxt = selected.length ? selected.map(i => i.text).join(', ') : '??';
-    const result = getSelected('result')[0] || '이상없음';
+    const selectedResult = getSelected('result')[0] || '이상없음';
     const note = document.getElementById('f4_note').value.trim();
+    const result = note || selectedResult;
     let msg = `【${blk}BL일일점검】\n■위치 : ${dongs} ${place}\n■내용 : ${contentTxt}\n■결과 : ${result}.`;
-    if (note) msg += `\n■특이사항 : ${note}`;
+    if (note && selectedResult !== '이상없음') msg += `\n■처리상태 : ${selectedResult}`;
     return msg;
   }
   return '';
@@ -1340,7 +1380,7 @@ function updateLightbox() {
 function resetForm(idx){
   const form=document.getElementById('form'+idx);
   if(!form) return;
-  form.querySelectorAll('input').forEach(inp=>{
+  form.querySelectorAll('input, textarea').forEach(inp=>{
     if(inp.type==='file') return;
     if(inp.id==='f1_startTime') inp.value='08:00';
     else if(inp.id==='f2_stop_abs1'||inp.id==='f2_stop_abs2'||inp.id==='f2_zoneTime') inp.value='19:00';
@@ -1370,7 +1410,7 @@ const REPORT_STATE_KEY = 'report_menu_saved_state_v2';
 let _loadingReportState = false;
 function collectReportState(){
   const state = { inputs:{}, selects:{}, toggles:{} };
-  document.querySelectorAll('input[id]').forEach(inp=>{
+  document.querySelectorAll('input[id], textarea[id]').forEach(inp=>{
     if (inp.type === 'file') return;
     state.inputs[inp.id] = inp.value;
   });
@@ -1429,6 +1469,7 @@ switchTab = function(idx){
 window.addEventListener('beforeunload', saveReportState);
 
 // 초기화
+loadInspectionPlaces();
 loadReportState();
 renderContentList();
 Object.keys(workItems).forEach(k => renderWorkList(k));
@@ -1743,3 +1784,4 @@ if ("serviceWorker" in navigator) {
 
 </body>
 </html>
+
