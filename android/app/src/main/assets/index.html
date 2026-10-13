@@ -1816,7 +1816,11 @@ if (!window.ReportAndroid && "serviceWorker" in navigator) {
     }
   }
 
+  let tempRefreshing = false;
   async function autoFillKmaTemp(){
+    if (tempRefreshing) return;
+    tempRefreshing = true;
+    if(typeof showToast === 'function') showToast('현재 온도 조회 중…');
     try{
       setStatus('현재 위치 확인 중...', '');
       const pos = await getPosition();
@@ -1824,13 +1828,15 @@ if (!window.ReportAndroid && "serviceWorker" in navigator) {
       setStatus('기상청 현재기온 조회 중...', '');
       const result = await fetchKmaTemp(pos.coords.latitude, pos.coords.longitude);
       fillAllTempInputs(result.temp);
+      if(typeof showToast === 'function') showToast('현재 온도 ' + Number(result.temp).toFixed(1) + '℃로 갱신했습니다.');
       const hh = result.base_time.slice(0,2) + ':00';
       setStatus('기상청 ' + Number(result.temp).toFixed(1) + '℃ 적용 완료' + (acc ? ' · 위치오차 약 ' + acc + 'm' : '') + ' · 기준 ' + hh, 'ok');
       try { localStorage.setItem('last_kma_temp_autofill', JSON.stringify({...result, accuracy: acc, savedAt: Date.now()})); } catch(e) {}
     }catch(err){
       console.error(err);
       setStatus('온도 자동조회 실패: ' + (err && err.message ? err.message : err), 'err');
-    }
+      if(typeof showToast === 'function') showToast('온도 조회 실패 · 위치 권한과 인터넷을 확인해 주세요.');
+    } finally { tempRefreshing = false; }
   }
 
   function addButtons(){
@@ -1858,6 +1864,35 @@ if (!window.ReportAndroid && "serviceWorker" in navigator) {
   window.autoFillKmaTemp = autoFillKmaTemp;
   window.addEventListener('load', function(){
     setTimeout(autoFillKmaTemp, 500);
+  });
+})();
+</script>
+
+
+<style id="touch-controls-style">
+.card.info-triple .input-row { min-height:80px!important; cursor:pointer; touch-action:manipulation; }
+.card.info-triple input[type="time"] { min-height:44px!important; width:100%!important; transform:none!important; }
+.card.info-triple .input-row:has(input[type="time"]):active,
+.input-row:has(input[id$="_temp"]):active { background:rgba(254,229,0,.1); border-radius:8px; }
+.input-row:has(input[id$="_temp"]) { cursor:pointer; touch-action:manipulation; }
+</style>
+<script id="touch-controls">
+(function(){
+  document.querySelectorAll('input[type="time"]').forEach(function(input){
+    const row=input.closest('.input-row');
+    if(!row) return;
+    row.addEventListener('click',function(event){
+      if(window.ReportAndroid && typeof window.ReportAndroid.pickTime==='function') {
+        window.ReportAndroid.pickTime(input.id,input.value); return;
+      }
+      try { if(typeof input.showPicker==='function') { input.showPicker(); return; } } catch(e) {}
+      if(event.target!==input) { input.focus(); input.click(); }
+    });
+  });
+  document.querySelectorAll('input[id$="_temp"]').forEach(function(input){
+    const row=input.closest('.input-row'); if(!row) return;
+    input.setAttribute('readonly','');
+    row.addEventListener('click',function(event){event.preventDefault();window.autoFillKmaTemp();});
   });
 })();
 </script>

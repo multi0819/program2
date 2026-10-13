@@ -15,7 +15,19 @@ public class MainActivity extends Activity {
  @Override public void onBackPressed(){web.evaluateJavascript("typeof closeLightbox==='function' && document.getElementById('lightbox').classList.contains('open') ? (closeLightbox(),true) : false",v->{if(!"true".equals(v))finish();});}
  @Override protected void onPause(){web.evaluateJavascript("if(typeof saveReportState==='function')saveReportState()",null);super.onPause();}
  @Override protected void onDestroy(){if(files!=null)files.onReceiveValue(null);web.removeJavascriptInterface("ReportAndroid");web.destroy();super.onDestroy();}
- public class Bridge {@JavascriptInterface public void copyAndOpen(String text){runOnUiThread(()->{((android.content.ClipboardManager)getSystemService(CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("운전보고",text));Intent i=getPackageManager().getLaunchIntentForPackage("com.kakao.talk");if(i!=null){startActivity(i);toast("메시지 복사 완료 · 카톡에 붙여넣으세요");}else toast("메시지 복사 완료");});}
+ public class Bridge {
+ @JavascriptInterface public void pickTime(String id,String value){
+  if(id==null||!id.matches("[A-Za-z0-9_]+"))return;
+  runOnUiThread(()->{
+   int hour=8,minute=0;
+   try{String[] parts=value.split(":");hour=Integer.parseInt(parts[0]);minute=Integer.parseInt(parts[1]);}catch(Exception ignored){}
+   new TimePickerDialog(MainActivity.this,(picker,h,m)->{
+    String selected=String.format(java.util.Locale.US,"%02d:%02d",h,m);
+    web.evaluateJavascript("(function(){var e=document.getElementById("+org.json.JSONObject.quote(id)+");if(e){e.value="+org.json.JSONObject.quote(selected)+";e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}));}})()",null);
+   },hour,minute,true).show();
+  });
+ }
+@JavascriptInterface public void copyAndOpen(String text){runOnUiThread(()->{((android.content.ClipboardManager)getSystemService(CLIPBOARD_SERVICE)).setPrimaryClip(ClipData.newPlainText("운전보고",text));Intent i=getPackageManager().getLaunchIntentForPackage("com.kakao.talk");if(i!=null){startActivity(i);toast("메시지 복사 완료 · 카톡에 붙여넣으세요");}else toast("메시지 복사 완료");});}
  @JavascriptInterface public boolean savePhoto(String data,String name){Uri uri=null;try{if(data==null||data.length()>28000000||!data.startsWith("data:image/"))return false;String mime=data.substring(5,data.indexOf(';'));String ext=mime.equals("image/png")?".png":mime.equals("image/webp")?".webp":".jpg";byte[] bytes=Base64.decode(data.substring(data.indexOf(',')+1),Base64.DEFAULT);ContentValues v=new ContentValues();v.put(MediaStore.Images.Media.DISPLAY_NAME,name+"_"+System.currentTimeMillis()+ext);v.put(MediaStore.Images.Media.MIME_TYPE,mime);v.put(MediaStore.Images.Media.RELATIVE_PATH,"Pictures/FacilityReport");v.put(MediaStore.Images.Media.IS_PENDING,1);uri=getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,v);if(uri==null)return false;try(OutputStream out=getContentResolver().openOutputStream(uri)){out.write(bytes);}v.clear();v.put(MediaStore.Images.Media.IS_PENDING,0);getContentResolver().update(uri,v,null,null);return true;}catch(Exception e){if(uri!=null)getContentResolver().delete(uri,null,null);return false;}}
  }
 }
