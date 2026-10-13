@@ -1094,6 +1094,13 @@ function addInspectionPlace() {
   select.value=place; input.value=''; updatePreview(4);
 }
 
+// 오늘의 설정시간을 현재 시각과 분 단위로 비교합니다.
+function chillerRunStatus(time, now = new Date()) {
+  const [hour, minute] = time.split(':').map(Number);
+  return hour * 60 + minute > now.getHours() * 60 + now.getMinutes()
+    ? '가동 예정' : '정상 가동';
+}
+
 // 메시지 생성
 function buildMsg(idx) {
   const block = getBlock();
@@ -1120,7 +1127,7 @@ function buildMsg(idx) {
     const fcuTimeRange = et ? `${fmtTime(st)}~${fmtTime(et)}` : `${fmtTime(st)}~`;
     return `${header}
 ■ 외기온도 : ${temp}℃
-■ 냉 동 기  : ${fmtTime(st)} ${chiller} 정상 가동
+■ 냉 동 기  : ${fmtTime(st)} ${chiller} ${chillerRunStatus(st)}
 ■ 공조기 : ${ahuSchedule} 가동
 ■ FCU : ${fcuDongs} ${fcuTimeRange} 가동
 ■ 시설물 이상유무 : ${reportNote(idx)}`;
@@ -1519,6 +1526,7 @@ switchTab = function(idx){
 };
 
 window.addEventListener('beforeunload', saveReportState);
+setInterval(function(){ if(currentTab === 1) updatePreview(1); }, 30000);
 
 
 // 자재 목록은 외부 작업 목록과 별도로 저장합니다.
