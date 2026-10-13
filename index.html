@@ -641,6 +641,8 @@ body:before {display:none;}
 <div class="input-row"><label>E동 예정</label><input id="f1_ahu_E" onchange="updatePreview(1)" type="time"/></div>
 <div class="input-row"><label>F동 예정</label><input id="f1_ahu_F" onchange="updatePreview(1)" type="time"/></div>
 </div>
+<div class="section-label">FCU 가동시간</div>
+<div class="card info-list"><div class="input-row"><label>FCU 가동 시간</label><input id="f1_fcuStartTime" onchange="updatePreview(1)" type="time"/></div></div>
 <div class="section-label">FCU 가동</div>
 <div class="card scroll-card">
 <div class="toggle-wrap">
@@ -1124,7 +1126,8 @@ function buildMsg(idx) {
     const chiller = getSelected('chiller1').join(', ') || '??';
     const ahuSchedule = buildAhuScheduleLine();
     const fcuDongs = getSelected('fcu1').map(d => d+'동').join(', ') || '??';
-    const fcuTimeRange = et ? `${fmtTime(st)}~${fmtTime(et)}` : `${fmtTime(st)}~`;
+    const fcuStart = document.getElementById('f1_fcuStartTime').value;
+    const fcuTimeRange = fcuStart ? (et ? `${fmtTime(fcuStart)}~${fmtTime(et)}` : `${fmtTime(fcuStart)}~`) : '가동시간 미입력';
     return `${header}
 ■ 외기온도 : ${temp}℃
 ■ 냉 동 기  : ${fmtTime(st)} ${chiller} ${chillerRunStatus(st)}

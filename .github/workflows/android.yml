@@ -16,11 +16,11 @@ jobs:
         with:
           gradle-version: '8.11.1'
       - name: Check touch controls
-        run: node tests/touch-controls.cjs && node tests/chiller-schedule.cjs
+        run: node tests/touch-controls.cjs && node tests/chiller-schedule.cjs && node tests/fcu-time.cjs
       - name: Build APK
         working-directory: android
         run: gradle :app:assembleDebug -Pandroid.useAndroidX=true
       - uses: actions/upload-artifact@v4
         with:
-          name: FacilityReport-v1.0.3-apk
+          name: FacilityReport-v1.0.4-build
           path: android/app/build/outputs/apk/debug/app-debug.apk
