@@ -559,6 +559,15 @@ body:before {display:none;}
 .unit {font-size:16px;font-weight:600;}
 @media(max-width:420px){body{padding:12px 14px 32px}.card{padding:14px}.header h1{font-size:25px}.tab{min-width:96px}.input-row label{min-width:78px}.card:has(#f1_temp),.card:has(#f2_temp){padding:14px 7px}.card:has(#f1_temp) .input-row,.card:has(#f2_temp) .input-row{padding:0 5px}}
 </style>
+<style id="ladder-list-layout">
+#form7 .add-item-row{display:flex;align-items:center;gap:8px;margin-top:12px}
+#form7 .add-item-row input{flex:1;width:0;min-width:0;height:48px!important;text-align:left;font-size:16px!important;font-weight:500!important}
+#form7 .add-item-row input::placeholder{color:var(--text-muted);opacity:1}
+#form7 .add-item-row .btn-add{flex:0 0 48px;min-width:48px;width:48px;height:48px!important;margin:0;border-radius:11px;font-size:22px;line-height:1}
+#form7 .content-item{padding:8px 10px}
+#form7 .content-item .item-text{white-space:normal;overflow-wrap:anywhere;font-size:16px}
+#form7 .content-item button{min-width:36px;min-height:40px}
+</style>
 </head>
 <body class="app-body">
 <div class="header">
@@ -913,15 +922,15 @@ body:before {display:none;}
 <div class="card info-list"><div class="input-row"><label for="f7_date">사용일자</label><input id="f7_date" type="text" value="10/14" oninput="updatePreview(7)"/></div></div>
 <div class="section-label">사용사다리</div>
 <div class="card"><div class="content-list" id="ladder_ladder_list"></div>
-<div class="add-row"><input id="ladder_ladder_input" type="text" placeholder="사용사다리 추가" onkeydown="if(event.key==='Enter'){event.preventDefault();addLadderItem('ladder')}"/><button type="button" class="btn-add" id="ladder_ladder_add" aria-label="사용사다리 추가" onclick="addLadderItem('ladder')">+</button></div>
+<div class="add-item-row"><input id="ladder_ladder_input" type="text" placeholder="사용사다리 추가" onkeydown="if(event.key==='Enter'){event.preventDefault();addLadderItem('ladder')}"/><button type="button" class="btn-add" id="ladder_ladder_add" aria-label="사용사다리 추가" onclick="addLadderItem('ladder')">+</button></div>
 <input id="f7_ladder" type="hidden" value="시설-3-02"/></div>
 <div class="section-label">사용장소</div>
 <div class="card"><div class="content-list" id="ladder_place_list"></div>
-<div class="add-row"><input id="ladder_place_input" type="text" placeholder="사용장소 추가" onkeydown="if(event.key==='Enter'){event.preventDefault();addLadderItem('place')}"/><button type="button" class="btn-add" id="ladder_place_add" aria-label="사용장소 추가" onclick="addLadderItem('place')">+</button></div>
+<div class="add-item-row"><input id="ladder_place_input" type="text" placeholder="사용장소 추가" onkeydown="if(event.key==='Enter'){event.preventDefault();addLadderItem('place')}"/><button type="button" class="btn-add" id="ladder_place_add" aria-label="사용장소 추가" onclick="addLadderItem('place')">+</button></div>
 <input id="f7_place" type="hidden" value="DF동 6층"/></div>
 <div class="section-label">사용용도</div>
 <div class="card"><div class="content-list" id="ladder_purpose_list"></div>
-<div class="add-row"><input id="ladder_purpose_input" type="text" placeholder="사용용도 추가" onkeydown="if(event.key==='Enter'){event.preventDefault();addLadderItem('purpose')}"/><button type="button" class="btn-add" id="ladder_purpose_add" aria-label="사용용도 추가" onclick="addLadderItem('purpose')">+</button></div>
+<div class="add-item-row"><input id="ladder_purpose_input" type="text" placeholder="사용용도 추가" onkeydown="if(event.key==='Enter'){event.preventDefault();addLadderItem('purpose')}"/><button type="button" class="btn-add" id="ladder_purpose_add" aria-label="사용용도 추가" onclick="addLadderItem('purpose')">+</button></div>
 <input id="f7_purpose" type="hidden" value="자동문 점검"/></div>
 <div class="section-label">미리보기</div>
 <div class="preview-box"><div class="preview-bubble" id="preview7"></div></div>
