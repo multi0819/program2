@@ -574,6 +574,7 @@ body:before {display:none;}
 <div class="tab" onclick="switchTab(4)">⑤ 점검</div>
 <div class="tab" onclick="switchTab(5)">⑥ 외부</div>
 <div class="tab" onclick="switchTab(6)">⑦ 자재 입출고</div>
+<div class="tab" onclick="switchTab(7)">⑧ A형 사다리 사용보고</div>
 </div>
 <!-- 블럭 선택: 각 탭에 이동됨 -->
 <!-- ===== 양식 1: 가동 전 ===== -->
@@ -906,6 +907,19 @@ body:before {display:none;}
 <div class="section-label">수량</div><div class="card"><div class="input-row"><label>수량</label><input id="f6_quantity" type="number" inputmode="decimal" min="0" step="any" oninput="updatePreview(6)" placeholder="0"/><span class="unit">개</span></div></div>
 <div class="section-label">현재고</div><div class="card"><div class="input-row"><label>현재고</label><input id="f6_stock" type="number" inputmode="decimal" min="0" step="any" oninput="updatePreview(6)" placeholder="0"/><span class="unit">개</span></div></div>
 <div class="section-label">미리보기</div><div class="preview-box"><div class="preview-bubble" id="preview6"></div></div><div class="action-bar"><button class="btn-reset" onclick="resetForm(6)">⌫ 초기화</button><button class="btn-copy" onclick="copyMsg(6)">✈ 메시지 복사 &amp; 카톡 열기</button></div></div>
+<!-- ===== 양식 8: A형 사다리 사용보고 ===== -->
+<div class="form-section" id="form7">
+<div class="section-label">A형 사다리 사용 정보</div>
+<div class="card info-list">
+<div class="input-row"><label for="f7_date">사용일자</label><input id="f7_date" type="text" value="10/14" oninput="updatePreview(7)"/></div>
+<div class="input-row"><label for="f7_ladder">사용사다리</label><input id="f7_ladder" type="text" value="시설-3-02" oninput="updatePreview(7)"/></div>
+<div class="input-row"><label for="f7_place">사용장소</label><input id="f7_place" type="text" value="DF동 6층" oninput="updatePreview(7)"/></div>
+<div class="input-row"><label for="f7_purpose">사용용도</label><input id="f7_purpose" type="text" value="자동문 점검" oninput="updatePreview(7)"/></div>
+</div>
+<div class="section-label">미리보기</div>
+<div class="preview-box"><div class="preview-bubble" id="preview7"></div></div>
+<div class="action-bar"><button class="btn-reset" onclick="resetForm(7)">⌫ 초기화</button><button class="btn-copy" onclick="copyMsg(7)">✈ 메시지 복사 &amp; 카톡 열기</button></div>
+</div>
 <!-- 라이트박스 -->
 <div class="lightbox" id="lightbox">
 <button class="lb-close" onclick="closeLightbox()">✕</button>
@@ -1108,6 +1122,10 @@ function buildMsg(idx) {
   const block = getBlock();
   const header = `【 G2BL - ${block}블럭 】`;
 
+  if (idx === 7) {
+    const value = key => document.getElementById('f7_' + key).value.trim() || '??';
+    return `【A형 사다리 사용보고】\n■ 사용일자 : ${value('date')}\n■ 사용사다리 : ${value('ladder')}\n■ 사용장소 : ${value('place')}\n■ 사용용도 : ${value('purpose')}`;
+  }
   if (idx === 6) {
     const parts = materialItems.part.filter(i=>i.selected).map(i=>i.text).join(', ') || '??';
     const uses = materialItems.use.filter(i=>i.selected).map(i=>i.text).join(', ') || '??';
