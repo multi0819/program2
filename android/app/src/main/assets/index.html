@@ -909,13 +909,20 @@ body:before {display:none;}
 <div class="section-label">미리보기</div><div class="preview-box"><div class="preview-bubble" id="preview6"></div></div><div class="action-bar"><button class="btn-reset" onclick="resetForm(6)">⌫ 초기화</button><button class="btn-copy" onclick="copyMsg(6)">✈ 메시지 복사 &amp; 카톡 열기</button></div></div>
 <!-- ===== 양식 8: A형 사다리 사용보고 ===== -->
 <div class="form-section" id="form7">
-<div class="section-label">A형 사다리 사용 정보</div>
-<div class="card info-list">
-<div class="input-row"><label for="f7_date">사용일자</label><input id="f7_date" type="text" value="10/14" oninput="updatePreview(7)"/></div>
-<div class="input-row"><label for="f7_ladder">사용사다리</label><input id="f7_ladder" type="text" value="시설-3-02" oninput="updatePreview(7)"/></div>
-<div class="input-row"><label for="f7_place">사용장소</label><input id="f7_place" type="text" value="DF동 6층" oninput="updatePreview(7)"/></div>
-<div class="input-row"><label for="f7_purpose">사용용도</label><input id="f7_purpose" type="text" value="자동문 점검" oninput="updatePreview(7)"/></div>
-</div>
+<div class="section-label">사용일자</div>
+<div class="card info-list"><div class="input-row"><label for="f7_date">사용일자</label><input id="f7_date" type="text" value="10/14" oninput="updatePreview(7)"/></div></div>
+<div class="section-label">사용사다리</div>
+<div class="card"><div class="content-list" id="ladder_ladder_list"></div>
+<div class="add-row"><input id="ladder_ladder_input" type="text" placeholder="사용사다리 추가" onkeydown="if(event.key==='Enter'){event.preventDefault();addLadderItem('ladder')}"/><button type="button" class="btn-add" id="ladder_ladder_add" aria-label="사용사다리 추가" onclick="addLadderItem('ladder')">+</button></div>
+<input id="f7_ladder" type="hidden" value="시설-3-02"/></div>
+<div class="section-label">사용장소</div>
+<div class="card"><div class="content-list" id="ladder_place_list"></div>
+<div class="add-row"><input id="ladder_place_input" type="text" placeholder="사용장소 추가" onkeydown="if(event.key==='Enter'){event.preventDefault();addLadderItem('place')}"/><button type="button" class="btn-add" id="ladder_place_add" aria-label="사용장소 추가" onclick="addLadderItem('place')">+</button></div>
+<input id="f7_place" type="hidden" value="DF동 6층"/></div>
+<div class="section-label">사용용도</div>
+<div class="card"><div class="content-list" id="ladder_purpose_list"></div>
+<div class="add-row"><input id="ladder_purpose_input" type="text" placeholder="사용용도 추가" onkeydown="if(event.key==='Enter'){event.preventDefault();addLadderItem('purpose')}"/><button type="button" class="btn-add" id="ladder_purpose_add" aria-label="사용용도 추가" onclick="addLadderItem('purpose')">+</button></div>
+<input id="f7_purpose" type="hidden" value="자동문 점검"/></div>
 <div class="section-label">미리보기</div>
 <div class="preview-box"><div class="preview-bubble" id="preview7"></div></div>
 <div class="action-bar"><button class="btn-reset" onclick="resetForm(7)">⌫ 초기화</button><button class="btn-copy" onclick="copyMsg(7)">✈ 메시지 복사 &amp; 카톡 열기</button></div>
@@ -1460,6 +1467,7 @@ function resetForm(idx){
   const form=document.getElementById('form'+idx);
   if(idx===6){['part','use'].forEach(k=>{materialEditing[k]=null;document.getElementById('material_'+k+'_add').textContent='+';});}
   if(!form) return;
+  if(idx===7){['ladder','place','purpose'].forEach(key=>{ladderItems[key].forEach(i=>i.selected=false);ladderEditing[key]=null;document.getElementById('ladder_'+key+'_add').textContent='+';saveLadderItems(key);renderLadderList(key)});}
   form.querySelectorAll('input, textarea').forEach(inp=>{
     if(inp.type==='file') return;
     if(inp.id==='f1_startTime') inp.value='08:00';
@@ -1576,9 +1584,66 @@ function addMaterialItem(key){
 function editMaterialItem(key,id){const item=materialItems[key].find(i=>i.id===id);if(!item)return;materialEditing[key]=id;const input=document.getElementById('material_'+key+'_input');input.value=item.text;input.focus();document.getElementById('material_'+key+'_add').textContent='✓';}
 function deleteMaterialItem(key,id){const item=materialItems[key].find(i=>i.id===id);if(!item||!confirm('"'+item.text+'" 삭제하시겠습니까?'))return;materialItems[key]=materialItems[key].filter(i=>i.id!==id);if(materialEditing[key]===id){materialEditing[key]=null;document.getElementById('material_'+key+'_input').value='';document.getElementById('material_'+key+'_add').textContent='+';}saveMaterialItems(key);renderMaterialList(key);updatePreview(6);}
 
+// 사다리 목록 관리
+const ladderItems = {};
+const ladderEditing = {ladder:null,place:null,purpose:null};
+function initLadderLists(){
+  ['ladder','place','purpose'].forEach(key=>{
+    let saved=null;
+    try{saved=JSON.parse(localStorage.getItem('ladder_items_'+key)||'null')}catch(e){}
+    if(Array.isArray(saved)){
+      ladderItems[key]=saved.filter(i=>i&&Number.isInteger(i.id)&&typeof i.text==='string').map(i=>({id:i.id,text:i.text,selected:!!i.selected}));
+      let selected=false;ladderItems[key].forEach(i=>{if(i.selected){if(selected)i.selected=false;selected=true}});
+    }else{
+      const text=document.getElementById('f7_'+key).value.trim();
+      ladderItems[key]=text?[{id:1,text,selected:true}]:[];
+    }
+    renderLadderList(key);
+  });
+}
+function saveLadderItems(key){try{localStorage.setItem('ladder_items_'+key,JSON.stringify(ladderItems[key]))}catch(e){showToast('목록을 저장하지 못했습니다')}}
+function renderLadderList(key){
+  const list=document.getElementById('ladder_'+key+'_list');list.replaceChildren();
+  ladderItems[key].forEach(item=>{
+    const row=document.createElement('div');row.className='content-item'+(item.selected?' selected':'');
+    const text=document.createElement('span');text.className='item-text';text.textContent=item.text;row.appendChild(text);
+    [['edit','✏️',()=>editLadderItem(key,item.id)],['del','🗑️',()=>deleteLadderItem(key,item.id)]].forEach(([name,label,action])=>{
+      const btn=document.createElement('button');btn.type='button';btn.className=name;btn.textContent=label;btn.style.cssText='background:transparent;border:0;color:inherit;min-width:36px;min-height:40px';
+      btn.setAttribute('aria-label',item.text+(name==='edit'?' 수정':' 삭제'));btn.onclick=e=>{e.stopPropagation();action()};row.appendChild(btn);
+    });
+    row.onclick=()=>{const selected=!item.selected;ladderItems[key].forEach(i=>i.selected=false);item.selected=selected;saveLadderItems(key);renderLadderList(key);updatePreview(7)};
+    list.appendChild(row);
+  });
+  document.getElementById('f7_'+key).value=ladderItems[key].find(i=>i.selected)?.text||'';
+}
+function addLadderItem(key){
+  const input=document.getElementById('ladder_'+key+'_input'),text=input.value.trim();if(!text)return;
+  const eid=ladderEditing[key];
+  if(eid!==null){const item=ladderItems[key].find(i=>i.id===eid);if(item)item.text=text;ladderEditing[key]=null}
+  else{
+    ladderItems[key].forEach(i=>i.selected=false);
+    const existing=ladderItems[key].find(i=>i.text===text);
+    if(existing)existing.selected=true;
+    else ladderItems[key].push({id:Math.max(0,...ladderItems[key].map(i=>i.id))+1,text,selected:true});
+  }
+  input.value='';document.getElementById('ladder_'+key+'_add').textContent='+';
+  saveLadderItems(key);renderLadderList(key);updatePreview(7);
+}
+function editLadderItem(key,id){
+  const item=ladderItems[key].find(i=>i.id===id);if(!item)return;
+  ladderEditing[key]=id;const input=document.getElementById('ladder_'+key+'_input');input.value=item.text;input.focus();document.getElementById('ladder_'+key+'_add').textContent='✓';
+}
+function deleteLadderItem(key,id){
+  const item=ladderItems[key].find(i=>i.id===id);if(!item||!confirm('"'+item.text+'" 삭제하시겠습니까?'))return;
+  ladderItems[key]=ladderItems[key].filter(i=>i.id!==id);
+  if(ladderEditing[key]===id){ladderEditing[key]=null;document.getElementById('ladder_'+key+'_input').value='';document.getElementById('ladder_'+key+'_add').textContent='+'}
+  saveLadderItems(key);renderLadderList(key);updatePreview(7);
+}
+
 // 초기화
 loadInspectionPlaces();
 loadReportState();
+initLadderLists();
 renderContentList();
 Object.keys(workItems).forEach(k => renderWorkList(k));
 renderMaterialList("part");renderMaterialList("use");
