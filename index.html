@@ -528,7 +528,8 @@ body.app-body{max-width:480px;margin:0 auto;padding:18px 18px 44px!important;ove
 
 .report-note {width:100%;box-sizing:border-box;background:var(--card);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font:inherit;font-size:20px;padding:14px;resize:vertical;min-height:100px;}
 .report-note:focus {outline:2px solid var(--accent,#ffe600);}
-.time-clear{flex:none;min-width:48px;min-height:40px;margin-left:8px;border:1px solid var(--text-muted);border-radius:8px;background:transparent;color:var(--text);font-size:13px;cursor:pointer}
+.card .input-row:has(.time-clear){grid-template-columns:minmax(96px,34%) minmax(0,1fr) 48px!important}
+.time-clear{flex:none;min-width:48px;min-height:40px;margin-left:0;border:1px solid var(--text-muted);border-radius:8px;background:transparent;color:var(--text);font-size:13px;cursor:pointer}
 </style>
 <style>
 /* Refined mobile report interface */
