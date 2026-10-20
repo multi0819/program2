@@ -1,0 +1,30 @@
+const fs=require('fs'),vm=require('vm'),assert=require('node:assert/strict');
+const html=fs.readFileSync('index.html','utf8');
+const code=html.match(/function buildMsg\(idx\) \{[^]*?\n\}/)[0];
+const values={f1_startTime:'08:00',f1_fcuStartTime:'',f2_zoneTime:''};
+const selected={chiller1:[],chiller2:[],fcu1:['C'],zone2:['D']};
+const ctx={document:{getElementById:id=>({value:values[id]||''})},getBlock:()=>2,getSelected:g=>selected[g]||[],buildAhuScheduleLine:()=>'-',fmtTime:t=>t||'??',reportNote:()=>'-',chillerRunStatus:()=> '정상 가동'};
+vm.createContext(ctx);vm.runInContext(code,ctx);
+assert.match(ctx.buildMsg(1),/■ 냉 동 기  : 미가동\n/);
+assert.match(ctx.buildMsg(2),/■ 냉동기  : 미가동\n/);
+assert.match(ctx.buildMsg(1),/■ FCU : 미가동\n/);
+assert.match(ctx.buildMsg(2),/■ 공조기, FCU : 미가동\n/);
+assert.match(ctx.buildMsg(2),/■ FCU Zone밸브 :  미가동\n/);
+selected.chiller1=['터보'];selected.chiller2=['터보'];
+values.f1_fcuStartTime='09:30';values.f1_endTime='19:00';values.f2_C='18:00';values.f2_zoneTime='19:30';values.f2_stop_turbo='19:00';
+assert.match(ctx.buildMsg(1),/08:00 터보 정상 가동/);
+assert.match(ctx.buildMsg(1),/C동 09:30~19:00 가동/);
+assert.match(ctx.buildMsg(2),/터보 19:00 정상 정지/);
+assert.match(ctx.buildMsg(2),/C동 18:00 정지/);
+assert.match(ctx.buildMsg(2),/D동 19:30 OFF 완료/);
+console.log('미선택 냉동기 / 빈 FCU·Zone 시간 / 입력 시간 출력 통과');
+const elements={f1_fcuStartTime:{value:'09:30'},f2_C:{value:'18:00'},f2_zoneTime:{value:'19:00'}};
+let updated;
+const clearCtx={document:{getElementById:id=>elements[id]},updatePreview:idx=>updated=idx};
+vm.createContext(clearCtx);vm.runInContext(html.match(/function clearReportTime\(id, idx\)\{[^]*?\n\}/)[0],clearCtx);
+for(const [id,el] of Object.entries(elements)){
+  const idx=id.startsWith('f1')?1:2;
+  clearCtx.clearReportTime(id,idx);
+  assert.equal(el.value,'');assert.equal(updated,idx);
+}
+console.log('시간 삭제와 미리보기 갱신 통과');

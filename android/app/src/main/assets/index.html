@@ -528,6 +528,7 @@ body.app-body{max-width:480px;margin:0 auto;padding:18px 18px 44px!important;ove
 
 .report-note {width:100%;box-sizing:border-box;background:var(--card);border:1.5px solid var(--border);border-radius:12px;color:var(--text);font:inherit;font-size:20px;padding:14px;resize:vertical;min-height:100px;}
 .report-note:focus {outline:2px solid var(--accent,#ffe600);}
+.time-clear{flex:none;min-width:48px;min-height:40px;margin-left:8px;border:1px solid var(--text-muted);border-radius:8px;background:transparent;color:var(--text);font-size:13px;cursor:pointer}
 </style>
 <style>
 /* Refined mobile report interface */
@@ -652,7 +653,7 @@ body:before {display:none;}
 <div class="input-row"><label>F동 예정</label><input id="f1_ahu_F" onchange="updatePreview(1)" type="time"/></div>
 </div>
 <div class="section-label">FCU 가동시간</div>
-<div class="card info-list"><div class="input-row"><label>FCU 가동 시간</label><input id="f1_fcuStartTime" onchange="updatePreview(1)" type="time"/></div></div>
+<div class="card info-list"><div class="input-row"><label>FCU 가동 시간</label><input id="f1_fcuStartTime" onchange="updatePreview(1)" type="time"/><button type="button" class="time-clear" aria-label="시간 삭제" onclick="event.stopPropagation();clearReportTime('f1_fcuStartTime',1)">삭제</button></div></div>
 <div class="section-label">FCU 가동</div>
 <div class="card scroll-card">
 <div class="toggle-wrap">
@@ -704,12 +705,12 @@ body:before {display:none;}
 <div class="section-label">공조기/FCU 정지 시간</div>
 <div class="card stop-list">
 <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">입력한 동만 메시지에 포함됩니다</div>
-<div class="input-row"><label>A동 정지</label><input id="f2_A" onchange="updatePreview(2)" type="time"/></div>
-<div class="input-row"><label>B동 정지</label><input id="f2_B" onchange="updatePreview(2)" type="time"/></div>
-<div class="input-row"><label>C동 정지</label><input id="f2_C" onchange="updatePreview(2)" type="time"/></div>
-<div class="input-row"><label>D동 정지</label><input id="f2_D" onchange="updatePreview(2)" type="time"/></div>
-<div class="input-row"><label>E동 정지</label><input id="f2_E" onchange="updatePreview(2)" type="time"/></div>
-<div class="input-row"><label>F동 정지</label><input id="f2_F" onchange="updatePreview(2)" type="time"/></div>
+<div class="input-row"><label>A동 정지</label><input id="f2_A" onchange="updatePreview(2)" type="time"/><button type="button" class="time-clear" aria-label="시간 삭제" onclick="event.stopPropagation();clearReportTime('f2_A',2)">삭제</button></div>
+<div class="input-row"><label>B동 정지</label><input id="f2_B" onchange="updatePreview(2)" type="time"/><button type="button" class="time-clear" aria-label="시간 삭제" onclick="event.stopPropagation();clearReportTime('f2_B',2)">삭제</button></div>
+<div class="input-row"><label>C동 정지</label><input id="f2_C" onchange="updatePreview(2)" type="time"/><button type="button" class="time-clear" aria-label="시간 삭제" onclick="event.stopPropagation();clearReportTime('f2_C',2)">삭제</button></div>
+<div class="input-row"><label>D동 정지</label><input id="f2_D" onchange="updatePreview(2)" type="time"/><button type="button" class="time-clear" aria-label="시간 삭제" onclick="event.stopPropagation();clearReportTime('f2_D',2)">삭제</button></div>
+<div class="input-row"><label>E동 정지</label><input id="f2_E" onchange="updatePreview(2)" type="time"/><button type="button" class="time-clear" aria-label="시간 삭제" onclick="event.stopPropagation();clearReportTime('f2_E',2)">삭제</button></div>
+<div class="input-row"><label>F동 정지</label><input id="f2_F" onchange="updatePreview(2)" type="time"/><button type="button" class="time-clear" aria-label="시간 삭제" onclick="event.stopPropagation();clearReportTime('f2_F',2)">삭제</button></div>
 </div>
 <div class="section-label">FCU Zone밸브 OFF</div>
 <div class="card zone-list scroll-card">
@@ -723,7 +724,7 @@ body:before {display:none;}
 </div>
 <div class="input-row" style="margin-top:12px;">
 <label>Zone OFF 시간</label>
-<input id="f2_zoneTime" onchange="updatePreview(2)" type="time" value="19:00"/>
+<input id="f2_zoneTime" onchange="updatePreview(2)" type="time" value="19:00"/><button type="button" class="time-clear" aria-label="시간 삭제" onclick="event.stopPropagation();clearReportTime('f2_zoneTime',2)">삭제</button>
 </div>
 </div>
 <div class="section-label">특이사항 (없으면 이상없음)</div>
@@ -1073,6 +1074,11 @@ function getBlock() {
   return b.length ? b[0] : '2';
 }
 
+function clearReportTime(id, idx){
+  document.getElementById(id).value = '';
+  updatePreview(idx);
+}
+
 // 시간 포맷
 function fmtTime(t) {
   if (!t) return '??';
@@ -1157,16 +1163,17 @@ function buildMsg(idx) {
     const temp = document.getElementById('f1_temp').value || '??';
     const st = document.getElementById('f1_startTime').value || '08:00';
     const et = document.getElementById('f1_endTime').value;
-    const chiller = getSelected('chiller1').join(', ') || '??';
+    const chiller = getSelected('chiller1').join(', ');
+    const chillerLine = chiller ? `${fmtTime(st)} ${chiller} ${chillerRunStatus(st)}` : '미가동';
     const ahuSchedule = buildAhuScheduleLine();
     const fcuDongs = getSelected('fcu1').map(d => d+'동').join(', ') || '??';
     const fcuStart = document.getElementById('f1_fcuStartTime').value;
     const fcuTimeRange = fcuStart ? (et ? `${fmtTime(fcuStart)}~${fmtTime(et)}` : `${fmtTime(fcuStart)}~`) : '가동시간 미입력';
     return `${header}
 ■ 외기온도 : ${temp}℃
-■ 냉 동 기  : ${fmtTime(st)} ${chiller} ${chillerRunStatus(st)}
+■ 냉 동 기  : ${chillerLine}
 ■ 공조기 : ${ahuSchedule} 가동
-■ FCU : ${fcuDongs} ${fcuTimeRange} 가동
+■ FCU : ${fcuStart ? `${fcuDongs} ${fcuTimeRange} 가동` : '미가동'}
 ■ 시설물 이상유무 : ${reportNote(idx)}`;
   }
   if (idx === 2) {
@@ -1179,7 +1186,7 @@ function buildMsg(idx) {
     const selectedChillers = getSelected('chiller2');
     const chillerLine = selectedChillers.length
       ? selectedChillers.map(c => `${c} ${fmtTime(stopMap[c])} 정상 정지`).join('\n             ')
-      : '??';
+      : '미가동';
     const grouped = {};
     ['A','B','C','D','E','F'].forEach(d => {
       const v = document.getElementById('f2_'+d).value;
@@ -1187,10 +1194,11 @@ function buildMsg(idx) {
     });
     let acuLine = Object.entries(grouped)
       .map(([t,ds]) => ds.join(', ')+' '+fmtTime(t)+' 정지').join('\n                ');
-    if (!acuLine) acuLine = '-';
+    if (!acuLine) acuLine = '미가동';
     const zoneDongs = getSelected('zone2').map(d => d+'동').join(', ') || '-';
-    const zoneT = document.getElementById('f2_zoneTime').value || '19:00';
-    return `${header}\n■ 외기온도 : ${temp}℃\n■ 냉동기  : ${chillerLine}\n■ 공조기, FCU : ${acuLine}\n■ FCU Zone밸브 :  ${zoneDongs} ${fmtTime(zoneT)} OFF 완료\n■ 시설물 이상유무 : ${reportNote(idx)}`;
+    const zoneT = document.getElementById('f2_zoneTime').value;
+    const zoneLine = zoneT ? `${zoneDongs} ${fmtTime(zoneT)} OFF 완료` : '미가동';
+    return `${header}\n■ 외기온도 : ${temp}℃\n■ 냉동기  : ${chillerLine}\n■ 공조기, FCU : ${acuLine}\n■ FCU Zone밸브 :  ${zoneLine}\n■ 시설물 이상유무 : ${reportNote(idx)}`;
   }
   if (idx === 3) {
     const temp = document.getElementById('f3_temp').value || '??';
@@ -1985,6 +1993,7 @@ if (!window.ReportAndroid && "serviceWorker" in navigator) {
     const row=input.closest('.input-row');
     if(!row) return;
     row.addEventListener('click',function(event){
+      if(event.target.closest && event.target.closest('.time-clear')) return;
       if(window.ReportAndroid && typeof window.ReportAndroid.pickTime==='function') {
         window.ReportAndroid.pickTime(input.id,input.value); return;
       }

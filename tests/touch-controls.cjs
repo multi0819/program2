@@ -10,3 +10,6 @@ vm.runInNewContext(code,{window,document:{querySelectorAll:q=>q.includes('time')
 row.listeners.click({target:{}});assert.deepEqual(picker,['f1_startTime','08:00']);
 tempRow.listeners.click({preventDefault(){}});assert.equal(refresh,1);
 console.log('시간 칸 전체 탭 / 온도 갱신 탭 통과');
+picker=null;
+row.listeners.click({target:{closest:()=>({className:'time-clear'})}});
+assert.equal(picker,null,'삭제 버튼은 시간 선택창을 열면 안 됨');
