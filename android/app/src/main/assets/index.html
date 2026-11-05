@@ -644,7 +644,7 @@ body:before {display:none;}
 <div class="toggle-btn selected" data-group="chiller1" data-val="흡수식2호기" onclick="toggleMulti(this)">흡수식2호기</div>
 </div>
 </div>
-<div class="section-label">공조기 동별 가동 예정시간</div>
+</div><div class="heatFields"><div class="section-label">열교환기</div><div class="card heatCard"><label>설정온도 (℃)<input id="h1_temp" type="number" value="50" oninput="updatePreview(1)"></label><label>기준 시각<input id="h1_time" type="time" value="" oninput="updatePreview(1)"></label></div><div class="section-label">FCU / FPU Zone 밸브</div><div class="card heatCard"><span>운전 상태 : Open</span><label>제외 구간 (선택)<textarea id="h1_exclude" rows="2" placeholder="예: D동 존밸브 (6F~11F) 제외" oninput="updatePreview(1)"></textarea></label></div><div class="section-label">공조기 추가 사항</div><div class="card heatCard"><label>층별 예외·추가 내역 (선택)<textarea id="h1_ahu" rows="2" placeholder="E,F동 - 06:30 가동&#10;D동 07:30 가동 예정" oninput="updatePreview(1)"></textarea></label></div><div class="card heatCard"><label>동파방지 운전<input id="h1_freeze" type="text" value="해당없음" oninput="updatePreview(1)"></label></div></div><div class="section-label">공조기 동별 가동 예정시간</div>
 <div class="card stop-list">
 <div class="input-row"><label>A동 예정</label><input id="f1_ahu_A" onchange="updatePreview(1)" type="time"/></div>
 <div class="input-row"><label>B동 예정</label><input id="f1_ahu_B" onchange="updatePreview(1)" type="time"/></div>
@@ -666,7 +666,7 @@ body:before {display:none;}
 <div class="toggle-btn selected" data-group="fcu1" data-val="F" onclick="toggleMulti(this)">F동</div>
 </div>
 </div>
-</div><div class="heatFields"><div class="section-label">열교환기</div><div class="card heatCard"><label>설정온도 (℃)<input id="h1_temp" type="number" value="50" oninput="updatePreview(1)"></label><label>기준 시각<input id="h1_time" type="time" value="" oninput="updatePreview(1)"></label></div><div class="section-label">FCU / FPU Zone 밸브</div><div class="card heatCard"><span>운전 상태 : Open</span><label>제외 구간 (선택)<textarea id="h1_exclude" rows="2" placeholder="예: D동 존밸브 (6F~11F) 제외" oninput="updatePreview(1)"></textarea></label></div><div class="section-label">공조기</div><div class="card heatCard"><label>동·층별 운전 내역 (한 줄씩 입력)<textarea id="h1_ahu" rows="2" placeholder="E,F동 - 06:30 가동&#10;D동 07:30 가동 예정" oninput="updatePreview(1)"></textarea></label></div><div class="card heatCard"><label>동파방지 운전<input id="h1_freeze" type="text" value="해당없음" oninput="updatePreview(1)"></label></div></div><div class="section-label">특이사항 (없으면 이상없음)</div>
+<div class="section-label">특이사항 (없으면 이상없음)</div>
 <div class="card"><textarea id="f1_note" rows="3" oninput="updatePreview(1)" placeholder="특이사항 입력 (없으면 비워두세요)" class="report-note"></textarea></div>
 <div class="section-label">미리보기</div>
 <div class="preview-box"><div class="preview-bubble" id="preview1"></div></div>
@@ -703,7 +703,7 @@ body:before {display:none;}
 <div class="input-row"><label>흡수식1호기 정지</label><input id="f2_stop_abs1" onchange="updatePreview(2)" type="time" value="19:00"/></div>
 <div class="input-row"><label>흡수식2호기 정지</label><input id="f2_stop_abs2" onchange="updatePreview(2)" type="time" value="19:00"/></div>
 </div>
-<div class="section-label">공조기/FCU 정지 시간</div>
+</div><div class="heatFields"><div class="section-label">열교환기</div><div class="card heatCard"><label>설정온도 (℃)<input id="h2_temp" type="number" value="50" oninput="updatePreview(2)"></label><label>OFF 시각<input id="h2_time" type="time" value="" oninput="updatePreview(2)"></label></div><div class="section-label">FCU / FPU Zone 밸브</div><div class="card heatCard"><label>제외 구간 (선택)<textarea id="h2_exclude" rows="2" placeholder="예: D동 존밸브 (6F~11F) 제외" oninput="updatePreview(2)"></textarea></label></div><div class="section-label">공조기 추가 사항</div><div class="card heatCard"><label>층별 예외·추가 내역 (선택)<textarea id="h2_ahu" rows="2" placeholder="F동(2,3F 제외) 16:30-OFF&#10;D,E,F(2,3F)동 19:00-OFF" oninput="updatePreview(2)"></textarea></label></div><div class="card heatCard"><label>동파방지 운전<input id="h2_freeze" type="text" value="해당없음" oninput="updatePreview(2)"></label></div></div><div class="section-label">공조기/FCU 정지 시간</div>
 <div class="card stop-list">
 <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px;">입력한 동만 메시지에 포함됩니다</div>
 <div class="input-row"><label>A동 정지</label><input id="f2_A" onchange="updatePreview(2)" type="time"/><button type="button" class="time-clear" aria-label="시간 삭제" onclick="event.stopPropagation();clearReportTime('f2_A',2)">삭제</button></div>
@@ -728,7 +728,7 @@ body:before {display:none;}
 <input id="f2_zoneTime" onchange="updatePreview(2)" type="time" value="19:00"/><button type="button" class="time-clear" aria-label="시간 삭제" onclick="event.stopPropagation();clearReportTime('f2_zoneTime',2)">삭제</button>
 </div>
 </div>
-</div><div class="heatFields"><div class="section-label">열교환기</div><div class="card heatCard"><label>설정온도 (℃)<input id="h2_temp" type="number" value="50" oninput="updatePreview(2)"></label><label>OFF 시각<input id="h2_time" type="time" value="" oninput="updatePreview(2)"></label></div><div class="section-label">FCU / FPU Zone 밸브</div><div class="card heatCard"><label>OFF 시각<input id="h2_zoneTime" type="time" value="" oninput="updatePreview(2)"></label><label>제외 구간 (선택)<textarea id="h2_exclude" rows="2" placeholder="예: D동 존밸브 (6F~11F) 제외" oninput="updatePreview(2)"></textarea></label></div><div class="section-label">공조기</div><div class="card heatCard"><label>동·층별 운전 내역 (한 줄씩 입력)<textarea id="h2_ahu" rows="2" placeholder="F동(2,3F 제외) 16:30-OFF&#10;D,E,F(2,3F)동 19:00-OFF" oninput="updatePreview(2)"></textarea></label></div><div class="card heatCard"><label>동파방지 운전<input id="h2_freeze" type="text" value="해당없음" oninput="updatePreview(2)"></label></div></div><div class="section-label">특이사항 (없으면 이상없음)</div>
+<div class="section-label">특이사항 (없으면 이상없음)</div>
 <div class="card"><textarea id="f2_note" rows="3" oninput="updatePreview(2)" placeholder="특이사항 입력 (없으면 비워두세요)" class="report-note"></textarea></div>
 <div class="section-label">미리보기</div>
 <div class="preview-box"><div class="preview-bubble" id="preview2"></div></div>
@@ -1150,13 +1150,24 @@ function chooseSeason(mode){
 }
 function heatingReport(i,header){
  const get=k=>document.getElementById('h'+i+'_'+k)?.value.trim()||'';
- const at=get('time'), zone=get('zoneTime'), exclusion=get('exclude');
+ const at=get('time'), zone=document.getElementById('f2_zoneTime').value, exclusion=get('exclude');
  const ahu=get('ahu').split(/\n/).map(s=>s.trim()).filter(Boolean).join('\n     ');
+ const val=id=>document.getElementById(id).value;
+ const groups={};
+ for(const d of 'ABCDEF'){
+  const t=val((i===1?'f1_ahu_':'f2_')+d);
+  if(t)(groups[t]??=[]).push(d+'동');
+ }
+ const schedules=Object.keys(groups).sort().map(t=>groups[t].join(', ')+' '+t+' '+(i===2?'정지':at&&t>at?'가동 예정':'가동'));
+ if(ahu)schedules.push(ahu);
+ const fcu=val('f1_fcuStartTime');
+ const fcuLine=i===1?'■ FCU : '+(fcu?[getSelected('fcu1').map(d=>d+'동').join(', '),fcu,'가동'].filter(Boolean).join(' '):'미가동'):null;
+ const zones=i===2?getSelected('zone2').map(d=>d+'동').join(', '):'';
  const heat=get('temp')?get('temp')+'℃':'온도 미입력';
  return [header,'■ 외기온도 : '+(document.getElementById('f'+i+'_temp').value||'??')+'℃',
  '■ 열교환기 설정온도 : '+heat+(at?(i===1?'('+at+' 기준) - 운전':' '+at+' - OFF'):' (시각 미입력)'),
- '■ FCU/FPU Zone V/V : '+(i===1?'Open':zone?zone+' - OFF':'OFF 시각 미입력')+(exclusion?'\n     '+exclusion:''),
- '■ 공조기 : '+(ahu||'미입력'),'■ 동파방지 운전 : '+(get('freeze')||'해당없음'),'■ 시설물 이상 유무 : '+reportNote(i)].join('\n');
+ '■ FCU/FPU Zone V/V : '+(i===1?'Open':zone?[zones,zone,'- OFF'].filter(Boolean).join(' '):'미가동')+(exclusion?'\n     '+exclusion:''),
+ (i===1?'■ 공조기 : ':'■ 공조기, FCU : ')+(schedules.join('\n     ')||'미가동'),fcuLine,'■ 동파방지 운전 : '+(get('freeze')||'해당없음'),'■ 시설물 이상 유무 : '+reportNote(i)].filter(Boolean).join('\n');
 }
 function buildMsg(idx) {
   const block = getBlock();
